@@ -26,12 +26,7 @@
             <div v-if="item.badge" class="ml-auto bg-red-500 text-xs text-white px-2 py-1 rounded-full">
               {{ item.badge }}
             </div>
-            <span 
-              v-if="item.requiresAdmin" 
-              class="ml-auto bg-red-500/20 text-red-300 text-xs px-2 py-1 rounded-full"
-            >
-              Admin
-            </span>
+            
           </router-link>
 
           <!-- Выпадающий список для "Обстановка" -->
@@ -79,12 +74,7 @@
                       <span class="text-sm">{{ child.icon }}</span>
                     </div>
                     <span class="text-sm font-medium">{{ child.name }}</span>
-                    <span 
-                      v-if="child.requiresAdmin" 
-                      class="ml-auto bg-red-500/20 text-red-300 text-xs px-2 py-1 rounded-full"
-                    >
-                      Admin
-                    </span>
+                    
                   </router-link>
                 </div>
               </div>

@@ -12,279 +12,372 @@
       </p>
     </div>
 
-    <!-- Открытый раздел -->
-    <div v-if="$route.path.includes('open')">
-      <!-- Обзор событий -->
-      <section>
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-          <span>📅</span>
-          <span>Обзор событий</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <NewsCard
-            v-for="news in octoberNews"
-            :key="news.id"
-            :news="news"
-            @open="openNewsModal"
-          />
-        </div>
-      </section>
-
-      <!-- Актуальные проблемы -->
-      <section class="mt-8">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-          <span>⚠️</span>
-          <span>Актуальные проблемы субъекта</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="glass rounded-2xl p-6 border border-red-400/30 bg-red-500/10">
-            <div class="flex items-center space-x-3 mb-4">
-              <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                <span class="text-xl">📉</span>
-              </div>
-              <h3 class="text-white font-bold text-lg">Демографическая ситуация</h3>
-            </div>
-            <p class="text-red-200 text-sm mb-4">
-              Снижение рождаемости на 8.3% по сравнению с 2024 годом. Естественная убыль населения составляет 6.7 человек на 1000 жителей.
-            </p>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-red-300">Приоритет: Высокий</span>
-              <span class="text-red-300">Статус: В работе</span>
-            </div>
+    <!-- Навигация по вкладкам -->
+    <div class="glass rounded-2xl p-1 border border-white/20">
+      <div class="flex space-x-1">
+        <button
+          v-for="tab in availableTabs"
+          :key="tab.id"
+          @click="activeTab = tab.id"
+          :class="[
+            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200',
+            activeTab === tab.id
+              ? 'bg-blue-600 text-white shadow-lg'
+              : 'text-blue-200 hover:text-white hover:bg-white/10'
+          ]"
+        >
+          <div class="flex items-center justify-center space-x-2">
+            <span class="text-lg">{{ tab.icon }}</span>
+            <span>{{ tab.title }}</span>
           </div>
-
-          <div class="glass rounded-2xl p-6 border border-yellow-400/30 bg-yellow-500/10">
-            <div class="flex items-center space-x-3 mb-4">
-              <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                <span class="text-xl">🏭</span>
-              </div>
-              <h3 class="text-white font-bold text-lg">Промышленный рост</h3>
-            </div>
-            <p class="text-yellow-200 text-sm mb-4">
-              Замедление темпов роста промышленного производства до 2.1%. Необходима модернизация предприятий и привлечение инвестиций.
-            </p>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-yellow-300">Приоритет: Средний</span>
-              <span class="text-yellow-300">Статус: Анализ</span>
-            </div>
-          </div>
-
-          <div class="glass rounded-2xl p-6 border border-orange-400/30 bg-orange-500/10">
-            <div class="flex items-center space-x-3 mb-4">
-              <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                <span class="text-xl">🏥</span>
-              </div>
-              <h3 class="text-white font-bold text-lg">Здравоохранение</h3>
-            </div>
-            <p class="text-orange-200 text-sm mb-4">
-              Дефицит узких специалистов в районных больницах. Очередь на плановую госпитализацию достигает 3-4 месяцев.
-            </p>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-orange-300">Приоритет: Высокий</span>
-              <span class="text-orange-300">Статус: Планирование</span>
-            </div>
-          </div>
-
-          <div class="glass rounded-2xl p-6 border border-blue-400/30 bg-blue-500/10">
-            <div class="flex items-center space-x-3 mb-4">
-              <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <span class="text-xl">🛣️</span>
-              </div>
-              <h3 class="text-white font-bold text-lg">Дорожная инфраструктура</h3>
-            </div>
-            <p class="text-blue-200 text-sm mb-4">
-              42% региональных дорог требуют капитального ремонта. Увеличилось количество ДТП на 12% за последний год.
-            </p>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-blue-300">Приоритет: Средний</span>
-              <span class="text-blue-300">Статус: Финансирование</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Деятельность ГФИ -->
-      <section class="mt-8">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-          <span>👨‍💼</span>
-          <span>Деятельность Главного федерального инспектора</span>
-        </h2>
-        <div class="glass rounded-2xl p-6 border border-white/20">
-          <div class="space-y-6">
-            <div 
-              v-for="activity in gfiActivities" 
-              :key="activity.id"
-              class="flex items-start space-x-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0"
-            >
-              <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span class="text-xl">📋</span>
-              </div>
-              <div class="flex-1">
-                <h3 class="text-white font-semibold text-lg mb-2">{{ activity.title }}</h3>
-                <p class="text-blue-200 text-sm mb-3">{{ activity.description }}</p>
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-blue-300">{{ activity.date }}</span>
-                  <span class="text-green-300 bg-green-500/20 px-2 py-1 rounded-full">{{ activity.status }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </button>
+      </div>
     </div>
 
-    <!-- Закрытый раздел -->
-    <div v-else>
-      <div v-if="hasAccess">
-        <!-- Аналитические отчеты -->
+    <!-- Открытый раздел -->
+    <div v-if="$route.path.includes('open')">
+      <!-- Вкладка: Обзор событий -->
+      <div v-if="activeTab === 'events'" class="space-y-8">
         <section>
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-            <span>📊</span>
-            <span>Аналитические отчеты</span>
+            <span>📅</span>
+            <span>Обзор событий</span>
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <NewsCard
+              v-for="news in octoberNews"
+              :key="news.id"
+              :news="news"
+              @open="openNewsModal"
+            />
+          </div>
+        </section>
+      </div>
+
+      <!-- Вкладка: Актуальные проблемы -->
+      <div v-if="activeTab === 'problems'" class="space-y-8">
+        <section>
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
+            <span>⚠️</span>
+            <span>Актуальные проблемы субъекта</span>
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass rounded-2xl p-6 border border-purple-400/30 bg-purple-500/10">
+            <div class="glass rounded-2xl p-6 border border-red-400/30 bg-red-500/10">
               <div class="flex items-center space-x-3 mb-4">
-                <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-xl">💰</span>
+                <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">📉</span>
                 </div>
-                <h3 class="text-white font-bold text-lg">Экономические показатели за Q3 2025</h3>
+                <h3 class="text-white font-bold text-lg">Демографическая ситуация</h3>
               </div>
-              <p class="text-purple-200 text-sm mb-4">
-                Детальный анализ ВРП, инвестиционной активности и промышленного производства региона. Включает сравнительный анализ с соседними регионами и прогноз на Q4 2025.
+              <p class="text-red-200 text-sm mb-4">
+                Снижение рождаемости на 8.3% по сравнению с 2024 годом. Естественная убыль населения составляет 6.7 человек на 1000 жителей.
               </p>
               <div class="flex items-center justify-between text-xs">
-                <span class="text-purple-300">Конфиденциально</span>
-                <button class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
-                  Скачать PDF
-                </button>
+                <span class="text-red-300">Приоритет: Высокий</span>
+                <span class="text-red-300">Статус: В работе</span>
               </div>
             </div>
 
-            <div class="glass rounded-2xl p-6 border border-pink-400/30 bg-pink-500/10">
+            <div class="glass rounded-2xl p-6 border border-yellow-400/30 bg-yellow-500/10">
               <div class="flex items-center space-x-3 mb-4">
-                <div class="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-xl">👥</span>
+                <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🏭</span>
                 </div>
-                <h3 class="text-white font-bold text-lg">Социальная сфера: проблемы и решения</h3>
+                <h3 class="text-white font-bold text-lg">Промышленный рост</h3>
               </div>
-              <p class="text-pink-200 text-sm mb-4">
-                Анализ демографической ситуации, здравоохранения, образования и социальной защиты. Рекомендации по оптимизации социальных программ.
+              <p class="text-yellow-200 text-sm mb-4">
+                Замедление темпов роста промышленного производства до 2.1%. Необходима модернизация предприятий и привлечение инвестиций.
               </p>
               <div class="flex items-center justify-between text-xs">
-                <span class="text-pink-300">Для служебного пользования</span>
-                <button class="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
-                  Скачать PDF
-                </button>
+                <span class="text-yellow-300">Приоритет: Средний</span>
+                <span class="text-yellow-300">Статус: Анализ</span>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-orange-400/30 bg-orange-500/10">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🏥</span>
+                </div>
+                <h3 class="text-white font-bold text-lg">Здравоохранение</h3>
+              </div>
+              <p class="text-orange-200 text-sm mb-4">
+                Дефицит узких специалистов в районных больницах. Очередь на плановую госпитализацию достигает 3-4 месяцев.
+              </p>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-orange-300">Приоритет: Высокий</span>
+                <span class="text-orange-300">Статус: Планирование</span>
               </div>
             </div>
 
             <div class="glass rounded-2xl p-6 border border-blue-400/30 bg-blue-500/10">
               <div class="flex items-center space-x-3 mb-4">
                 <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-xl">🏛️</span>
+                  <span class="text-xl">🛣️</span>
                 </div>
-                <h3 class="text-white font-bold text-lg">Общественно-политическая обстановка</h3>
+                <h3 class="text-white font-bold text-lg">Дорожная инфраструктура</h3>
               </div>
               <p class="text-blue-200 text-sm mb-4">
-                Мониторинг политических процессов, анализ электоральных настроений и оценка социальной стабильности в регионе.
+                42% региональных дорог требуют капитального ремонта. Увеличилось количество ДТП на 12% за последний год.
               </p>
               <div class="flex items-center justify-between text-xs">
-                <span class="text-blue-300">Секретно</span>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
-                  Скачать PDF
-                </button>
-              </div>
-            </div>
-
-            <div class="glass rounded-2xl p-6 border border-green-400/30 bg-green-500/10">
-              <div class="flex items-center space-x-3 mb-4">
-                <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-xl">📈</span>
-                </div>
-                <h3 class="text-white font-bold text-lg">Прогноз развития на 2026 год</h3>
-              </div>
-              <p class="text-green-200 text-sm mb-4">
-                Стратегический прогноз социально-экономического развития Курской области с учетом федеральных трендов и региональных особенностей.
-              </p>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-green-300">Конфиденциально</span>
-                <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
-                  Скачать PDF
-                </button>
+                <span class="text-blue-300">Приоритет: Средний</span>
+                <span class="text-blue-300">Статус: Финансирование</span>
               </div>
             </div>
           </div>
         </section>
+      </div>
 
-        <!-- Статистические данные -->
-        <section class="mt-8">
+      <!-- Вкладка: Деятельность ГФИ -->
+      <div v-if="activeTab === 'gfi'" class="space-y-8">
+        <section>
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-            <span>📋</span>
-            <span>Статистические данные</span>
-          </h2>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="glass rounded-xl p-4 text-center border border-blue-400/30 bg-blue-500/10">
-              <div class="text-2xl font-bold text-white mb-1">+2.3%</div>
-              <div class="text-blue-200 text-xs">ВРП рост</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-green-400/30 bg-green-500/10">
-              <div class="text-2xl font-bold text-white mb-1">-8.3%</div>
-              <div class="text-green-200 text-xs">Рождаемость</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-yellow-400/30 bg-yellow-500/10">
-              <div class="text-2xl font-bold text-white mb-1">4.2%</div>
-              <div class="text-yellow-200 text-xs">Безработица</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-red-400/30 bg-red-500/10">
-              <div class="text-2xl font-bold text-white mb-1">+12%</div>
-              <div class="text-red-200 text-xs">Инфляция</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-purple-400/30 bg-purple-500/10">
-              <div class="text-2xl font-bold text-white mb-1">15.8%</div>
-              <div class="text-purple-200 text-xs">Бюджетный дефицит</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-pink-400/30 bg-pink-500/10">
-              <div class="text-2xl font-bold text-white mb-1">-3.7%</div>
-              <div class="text-pink-200 text-xs">Миграционный отток</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-indigo-400/30 bg-indigo-500/10">
-              <div class="text-2xl font-bold text-white mb-1">+5.1%</div>
-              <div class="text-indigo-200 text-xs">Инвестиции</div>
-            </div>
-            <div class="glass rounded-xl p-4 text-center border border-teal-400/30 bg-teal-500/10">
-              <div class="text-2xl font-bold text-white mb-1">87.3%</div>
-              <div class="text-teal-200 text-xs">Исполнение бюджета</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Ключевые показатели -->
-        <section class="mt-8">
-          <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-            <span>🎯</span>
-            <span>Ключевые показатели развития</span>
+            <span>👨‍💼</span>
+            <span>Деятельность Главного федерального инспектора</span>
           </h2>
           <div class="glass rounded-2xl p-6 border border-white/20">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-2">63%</div>
-                <div class="text-blue-200 text-sm">Уровень цифровизации</div>
-                <div class="text-blue-300 text-xs mt-1">+8% с начала года</div>
-              </div>
-              <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-2">42</div>
-                <div class="text-green-200 text-sm">Индекс развития</div>
-                <div class="text-green-300 text-xs mt-1">место в РФ</div>
-              </div>
-              <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-2">78%</div>
-                <div class="text-purple-200 text-sm">Доверие власти</div>
-                <div class="text-purple-300 text-xs mt-1">по опросам</div>
+            <div class="space-y-6">
+              <div 
+                v-for="activity in gfiActivities" 
+                :key="activity.id"
+                class="flex items-start space-x-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0"
+              >
+                <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span class="text-xl">📋</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-white font-semibold text-lg mb-2">{{ activity.title }}</h3>
+                  <p class="text-blue-200 text-sm mb-3">{{ activity.description }}</p>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-blue-300">{{ activity.date }}</span>
+                    <span class="text-green-300 bg-green-500/20 px-2 py-1 rounded-full">{{ activity.status }}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
+      </div>
+    </div>
+
+    <!-- Закрытый раздел -->
+    <div v-else>
+      <div v-if="hasAccess">
+        <!-- Вкладка: Аналитические отчеты -->
+        <div v-if="activeTab === 'reports'" class="space-y-8">
+          <section>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
+              <span>📊</span>
+              <span>Аналитические отчеты</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="glass rounded-2xl p-6 border border-purple-400/30 bg-purple-500/10">
+                <div class="flex items-center space-x-3 mb-4">
+                  <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <span class="text-xl">💰</span>
+                  </div>
+                  <h3 class="text-white font-bold text-lg">Экономические показатели за Q3 2025</h3>
+                </div>
+                <p class="text-purple-200 text-sm mb-4">
+                  Детальный анализ ВРП, инвестиционной активности и промышленного производства региона. Включает сравнительный анализ с соседними регионами и прогноз на Q4 2025.
+                </p>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-purple-300">Конфиденциально</span>
+                  <button class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
+                    Скачать PDF
+                  </button>
+                </div>
+              </div>
+
+              <div class="glass rounded-2xl p-6 border border-pink-400/30 bg-pink-500/10">
+                <div class="flex items-center space-x-3 mb-4">
+                  <div class="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center">
+                    <span class="text-xl">👥</span>
+                  </div>
+                  <h3 class="text-white font-bold text-lg">Социальная сфера: проблемы и решения</h3>
+                </div>
+                <p class="text-pink-200 text-sm mb-4">
+                  Анализ демографической ситуации, здравоохранения, образования и социальной защиты. Рекомендации по оптимизации социальных программ.
+                </p>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-pink-300">Для служебного пользования</span>
+                  <button class="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
+                    Скачать PDF
+                  </button>
+                </div>
+              </div>
+
+              <div class="glass rounded-2xl p-6 border border-blue-400/30 bg-blue-500/10">
+                <div class="flex items-center space-x-3 mb-4">
+                  <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <span class="text-xl">🏛️</span>
+                  </div>
+                  <h3 class="text-white font-bold text-lg">Общественно-политическая обстановка</h3>
+                </div>
+                <p class="text-blue-200 text-sm mb-4">
+                  Мониторинг политических процессов, анализ электоральных настроений и оценка социальной стабильности в регионе.
+                </p>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-blue-300">Секретно</span>
+                  <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
+                    Скачать PDF
+                  </button>
+                </div>
+              </div>
+
+              <div class="glass rounded-2xl p-6 border border-green-400/30 bg-green-500/10">
+                <div class="flex items-center space-x-3 mb-4">
+                  <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <span class="text-xl">📈</span>
+                  </div>
+                  <h3 class="text-white font-bold text-lg">Прогноз развития на 2026 год</h3>
+                </div>
+                <p class="text-green-200 text-sm mb-4">
+                  Стратегический прогноз социально-экономического развития Курской области с учетом федеральных трендов и региональных особенностей.
+                </p>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-green-300">Конфиденциально</span>
+                  <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold">
+                    Скачать PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Вкладка: Статистика -->
+        <div v-if="activeTab === 'statistics'" class="space-y-8">
+          <section>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
+              <span>📋</span>
+              <span>Статистические данные</span>
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="glass rounded-xl p-4 text-center border border-blue-400/30 bg-blue-500/10">
+                <div class="text-2xl font-bold text-white mb-1">+2.3%</div>
+                <div class="text-blue-200 text-xs">ВРП рост</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-green-400/30 bg-green-500/10">
+                <div class="text-2xl font-bold text-white mb-1">-8.3%</div>
+                <div class="text-green-200 text-xs">Рождаемость</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-yellow-400/30 bg-yellow-500/10">
+                <div class="text-2xl font-bold text-white mb-1">4.2%</div>
+                <div class="text-yellow-200 text-xs">Безработица</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-red-400/30 bg-red-500/10">
+                <div class="text-2xl font-bold text-white mb-1">+12%</div>
+                <div class="text-red-200 text-xs">Инфляция</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-purple-400/30 bg-purple-500/10">
+                <div class="text-2xl font-bold text-white mb-1">15.8%</div>
+                <div class="text-purple-200 text-xs">Бюджетный дефицит</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-pink-400/30 bg-pink-500/10">
+                <div class="text-2xl font-bold text-white mb-1">-3.7%</div>
+                <div class="text-pink-200 text-xs">Миграционный отток</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-indigo-400/30 bg-indigo-500/10">
+                <div class="text-2xl font-bold text-white mb-1">+5.1%</div>
+                <div class="text-indigo-200 text-xs">Инвестиции</div>
+              </div>
+              <div class="glass rounded-xl p-4 text-center border border-teal-400/30 bg-teal-500/10">
+                <div class="text-2xl font-bold text-white mb-1">87.3%</div>
+                <div class="text-teal-200 text-xs">Исполнение бюджета</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Ключевые показатели -->
+          <section>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
+              <span>🎯</span>
+              <span>Ключевые показатели развития</span>
+            </h2>
+            <div class="glass rounded-2xl p-6 border border-white/20">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-white mb-2">63%</div>
+                  <div class="text-blue-200 text-sm">Уровень цифровизации</div>
+                  <div class="text-blue-300 text-xs mt-1">+8% с начала года</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-white mb-2">42</div>
+                  <div class="text-green-200 text-sm">Индекс развития</div>
+                  <div class="text-green-300 text-xs mt-1">место в РФ</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-white mb-2">78%</div>
+                  <div class="text-purple-200 text-sm">Доверие власти</div>
+                  <div class="text-purple-300 text-xs mt-1">по опросам</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Вкладка: Мониторинг СМИ -->
+        <div v-if="activeTab === 'media'" class="space-y-8">
+          <section>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
+              <span>📺</span>
+              <span>Мониторинг СМИ и социальных сетей</span>
+            </h2>
+            <div class="glass rounded-2xl p-6 border border-white/20">
+              <div class="space-y-6">
+                <div class="flex items-start space-x-4 pb-6 border-b border-white/10">
+                  <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl">📰</span>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-white font-semibold text-lg mb-2">Тематические тренды</h3>
+                    <p class="text-blue-200 text-sm mb-3">
+                      Основные темы в региональных СМИ: демографическая ситуация (35%), дорожная инфраструктура (28%), поддержка бизнеса (22%).
+                    </p>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="text-blue-300">Анализ за октябрь 2025</span>
+                      <span class="text-orange-300 bg-orange-500/20 px-2 py-1 rounded-full">Стабильно</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-start space-x-4 pb-6 border-b border-white/10">
+                  <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl">⚠️</span>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-white font-semibold text-lg mb-2">Критические публикации</h3>
+                    <p class="text-blue-200 text-sm mb-3">
+                      Зафиксировано 12 критических публикаций в социальных сетях по теме здравоохранения, 8 - по дорожной инфраструктуре.
+                    </p>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="text-blue-300">За последние 7 дней</span>
+                      <span class="text-red-300 bg-red-500/20 px-2 py-1 rounded-full">Требует внимания</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                  <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl">👍</span>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-white font-semibold text-lg mb-2">Позитивный отклик</h3>
+                    <p class="text-blue-200 text-sm mb-3">
+                      Программа поддержки молодых семей получила 85% позитивных отзывов в социальных сетях и региональных СМИ.
+                    </p>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="text-blue-300">Охват: 250,000+</span>
+                      <span class="text-green-300 bg-green-500/20 px-2 py-1 rounded-full">Позитивно</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
 
       <!-- Сообщение о недостаточных правах -->
@@ -316,7 +409,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NewsCard from '@/components/ui/NewsCard.vue'
@@ -326,6 +419,29 @@ const route = useRoute()
 const authStore = useAuthStore()
 const showNewsModal = ref(false)
 const selectedNews = ref(null)
+const activeTab = ref('events')
+
+// Определяем доступные вкладки в зависимости от раздела
+const availableTabs = computed(() => {
+  if (route.path.includes('open')) {
+    return [
+      { id: 'events', title: 'Обзор событий', icon: '📅' },
+      { id: 'problems', title: 'Актуальные проблемы', icon: '⚠️' },
+      { id: 'gfi', title: 'Деятельность ГФИ', icon: '👨‍💼' }
+    ]
+  } else {
+    return [
+      { id: 'reports', title: 'Аналитические отчеты', icon: '📊' },
+      { id: 'statistics', title: 'Статистика', icon: '📋' },
+      { id: 'media', title: 'Мониторинг СМИ', icon: '📺' }
+    ]
+  }
+})
+
+// Сбрасываем активную вкладку при смене раздела
+watch(() => route.path, () => {
+  activeTab.value = availableTabs.value[0].id
+})
 
 const hasAccess = computed(() => {
   return authStore.hasAccess('admin')
@@ -408,9 +524,82 @@ const octoberNews = [
       phone: { label: 'Отдел сельского хозяйства', value: '+7 (4712) 234-567' },
       email: { label: 'Email', value: 'agriculture@kursk-region.ru' }
     }
+  },
+  {
+    id: 4,
+    title: 'Модернизация системы здравоохранения',
+    summary: 'Введены в эксплуатацию 12 новых фельдшерско-акушерских пунктов в сельской местности',
+    fullContent: 'В рамках программы "Модернизация первичного звена здравоохранения" в отдаленных сельских районах Курской области построено и введено в эксплуатацию 12 современных фельдшерско-акушерских пунктов. Каждый ФАП оснащен современным диагностическим оборудованием, компьютерной техникой и подключен к единой медицинской информационной системе.',
+    date: '2025-10-18',
+    category: 'Здравоохранение',
+    details: [
+      '12 новых ФАП в сельской местности',
+      'Оснащение цифровым диагностическим оборудованием',
+      'Подключение к единой медицинской системе',
+      'Обеспечение транспортом для экстренных вызовов',
+      'Повышение квалификации 45 медработников'
+    ],
+    statistics: {
+      faps: { value: '12', label: 'Новых ФАП' },
+      coverage: { value: '25,000', label: 'Охват населения' },
+      equipment: { value: '85 млн ₽', label: 'Инвестиции в оборудование' }
+    },
+    contacts: {
+      phone: { label: 'Минздрав области', value: '+7 (4712) 345-678' },
+      email: { label: 'Email', value: 'health@kursk-region.ru' }
+    }
+  },
+  {
+    id: 5,
+    title: 'Развитие транспортной инфраструктуры',
+    summary: 'Начата реконструкция автодороги "Курск-Белгород" с расширением до 4 полос движения',
+    fullContent: 'Стартовал первый этап реконструкции федеральной автодороги А-142 "Курск-Белгород". Проект предусматривает расширение дороги до 4 полос движения, строительство новых мостов и путепроводов, установку современной системы освещения и дорожных знаков. Общая протяженность реконструируемого участка составляет 45 км.',
+    date: '2025-10-15',
+    category: 'Транспорт',
+    details: [
+      'Расширение до 4 полос движения',
+      'Строительство 3 новых мостов',
+      'Установка интеллектуальной системы освещения',
+      'Создание 5 новых автобусных остановок',
+      'Обустройство велосипедных дорожек'
+    ],
+    statistics: {
+      length: { value: '45 км', label: 'Протяженность' },
+      investment: { value: '3.2 млрд ₽', label: 'Объем инвестиций' },
+      duration: { value: '18 мес', label: 'Срок реализации' }
+    },
+    contacts: {
+      phone: { label: 'Дорожная служба', value: '+7 (4712) 456-789' },
+      email: { label: 'Email', value: 'roads@kursk-region.ru' }
+    }
+  },
+  {
+    id: 6,
+    title: 'Экологическая инициатива',
+    summary: 'Запущен проект по раздельному сбору мусора в 15 муниципальных образованиях области',
+    fullContent: 'В рамках реализации национального проекта "Экология" в Курской области запущена программа по раздельному сбору твердых коммунальных отходов. Проект охватывает 15 муниципальных образований, где установлены специализированные контейнеры для разных видов отходов. Организована система логистики и переработки собранного сырья.',
+    date: '2025-10-10',
+    category: 'Экология',
+    details: [
+      'Охват 15 муниципальных образований',
+      'Установка 2,500 специализированных контейнеров',
+      'Создание 3 мусоросортировочных станций',
+      'Трудоустройство 120 человек',
+      'Снижение объема захоронения отходов на 40%'
+    ],
+    statistics: {
+      municipalities: { value: '15', label: 'Муниципалитетов' },
+      containers: { value: '2,500', label: 'Контейнеров' },
+      reduction: { value: '40%', label: 'Снижение отходов' }
+    },
+    contacts: {
+      phone: { label: 'Экологический комитет', value: '+7 (4712) 567-890' },
+      email: { label: 'Email', value: 'ecology@kursk-region.ru' }
+    }
   }
 ]
 
+// Данные для деятельности ГФИ
 const gfiActivities = [
   {
     id: 1,

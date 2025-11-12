@@ -21,123 +21,188 @@
       </div>
     </section>
 
-    <!-- Актуальные проблемы региона -->
-    <section>
-      <h2 class="text-2xl font-bold text-white mb-6">Актуальные проблемы субъекта</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass rounded-2xl p-6 border border-red-400/30 bg-red-500/10">
-          <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-              <span class="text-xl">📉</span>
-            </div>
-            <h3 class="text-white font-bold text-lg">Демографическая ситуация</h3>
-          </div>
-          <p class="text-red-200 text-sm mb-4">
-            Снижение рождаемости на 8.3% по сравнению с 2024 годом. Естественная убыль населения составляет 6.7 человек на 1000 жителей.
-          </p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-red-300">Приоритет: Высокий</span>
-            <span class="text-red-300">Статус: В работе</span>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-6 border border-yellow-400/30 bg-yellow-500/10">
-          <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-              <span class="text-xl">🏭</span>
-            </div>
-            <h3 class="text-white font-bold text-lg">Промышленный рост</h3>
-          </div>
-          <p class="text-yellow-200 text-sm mb-4">
-            Замедление темпов роста промышленного производства до 2.1%. Необходима модернизация предприятий и привлечение инвестиций.
-          </p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-yellow-300">Приоритет: Средний</span>
-            <span class="text-yellow-300">Статус: Анализ</span>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-6 border border-orange-400/30 bg-orange-500/10">
-          <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-              <span class="text-xl">🏥</span>
-            </div>
-            <h3 class="text-white font-bold text-lg">Здравоохранение</h3>
-          </div>
-          <p class="text-orange-200 text-sm mb-4">
-            Дефицит узких специалистов в районных больницах. Очередь на плановую госпитализацию достигает 3-4 месяцев.
-          </p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-orange-300">Приоритет: Высокий</span>
-            <span class="text-orange-300">Статус: Планирование</span>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-6 border border-blue-400/30 bg-blue-500/10">
-          <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <span class="text-xl">🛣️</span>
-            </div>
-            <h3 class="text-white font-bold text-lg">Дорожная инфраструктура</h3>
-          </div>
-          <p class="text-blue-200 text-sm mb-4">
-            42% региональных дорог требуют капитального ремонта. Увеличилось количество ДТП на 12% за последний год.
-          </p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-blue-300">Приоритет: Средний</span>
-            <span class="text-blue-300">Статус: Финансирование</span>
-          </div>
-        </div>
+    <!-- Табы -->
+    <section class="glass rounded-2xl border border-white/20 overflow-hidden">
+      <!-- Заголовок табов -->
+      <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 p-6 border-b border-white/10">
+        <h2 class="text-2xl font-bold text-white">Оперативная информация</h2>
+        <p class="text-blue-200 mt-2">Актуальные данные по ключевым направлениям</p>
       </div>
-    </section>
 
-    <!-- Последние события октября 2025 -->
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white">События октября 2025</h2>
-        <router-link to="/situation" class="text-blue-300 hover:text-white text-sm font-semibold transition-colors flex items-center space-x-1">
-          <span>Все события</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </router-link>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <NewsCard
-          v-for="news in octoberNews"
-          :key="news.id"
-          :news="news"
-          @open="openNewsModal"
-        />
-      </div>
-    </section>
-
-    <!-- Деятельность ГФИ -->
-    <section>
-      <h2 class="text-2xl font-bold text-white mb-6">Деятельность Главного федерального инспектора</h2>
-      <div class="glass rounded-2xl p-6 border border-white/20">
-        <div class="space-y-6">
-          <div 
-            v-for="activity in gfiActivities" 
-            :key="activity.id"
-            class="flex items-start space-x-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0"
+      <!-- Навигация табов -->
+      <div class="border-b border-white/10">
+        <div class="flex overflow-x-auto">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            class="flex items-center space-x-2 px-6 py-4 text-sm font-semibold transition-all duration-300 border-b-2 whitespace-nowrap"
+            :class="{
+              'text-white border-blue-400 bg-blue-500/10': activeTab === tab.id,
+              'text-blue-300 border-transparent hover:text-white hover:bg-white/5': activeTab !== tab.id
+            }"
           >
-            <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span class="text-xl">📋</span>
-            </div>
-            <div class="flex-1">
-              <h3 class="text-white font-semibold text-lg mb-2">{{ activity.title }}</h3>
-              <p class="text-blue-200 text-sm mb-3">{{ activity.description }}</p>
+            <span class="text-lg">{{ tab.icon }}</span>
+            <span>{{ tab.name }}</span>
+            <span 
+              v-if="tab.badge" 
+              class="bg-red-500 text-white text-xs px-2 py-1 rounded-full"
+            >
+              {{ tab.badge }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Контент табов -->
+      <div class="p-6">
+        <!-- Таб: Актуальные проблемы -->
+        <div v-if="activeTab === 'problems'" class="space-y-6">
+          <h3 class="text-xl font-bold text-white mb-6 flex items-center space-x-3">
+            <span>⚠️</span>
+            <span>Актуальные проблемы субъекта</span>
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass rounded-2xl p-6 border border-red-400/30 bg-red-500/10 hover:border-red-400/50 transition-all duration-300">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">📉</span>
+                </div>
+                <h4 class="text-white font-bold text-lg">Демографическая ситуация</h4>
+              </div>
+              <p class="text-red-200 text-sm mb-4">
+                Снижение рождаемости на 8.3% по сравнению с 2024 годом. Естественная убыль населения составляет 6.7 человек на 1000 жителей.
+              </p>
               <div class="flex items-center justify-between text-xs">
-                <span class="text-blue-300">{{ activity.date }}</span>
-                <span class="text-green-300 bg-green-500/20 px-2 py-1 rounded-full">{{ activity.status }}</span>
+                <span class="text-red-300">Приоритет: Высокий</span>
+                <span class="text-red-300">Статус: В работе</span>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-yellow-400/30 bg-yellow-500/10 hover:border-yellow-400/50 transition-all duration-300">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🏭</span>
+                </div>
+                <h4 class="text-white font-bold text-lg">Промышленный рост</h4>
+              </div>
+              <p class="text-yellow-200 text-sm mb-4">
+                Замедление темпов роста промышленного производства до 2.1%. Необходима модернизация предприятий и привлечение инвестиций.
+              </p>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-yellow-300">Приоритет: Средний</span>
+                <span class="text-yellow-300">Статус: Анализ</span>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-orange-400/30 bg-orange-500/10 hover:border-orange-400/50 transition-all duration-300">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🏥</span>
+                </div>
+                <h4 class="text-white font-bold text-lg">Здравоохранение</h4>
+              </div>
+              <p class="text-orange-200 text-sm mb-4">
+                Дефицит узких специалистов в районных больницах. Очередь на плановую госпитализацию достигает 3-4 месяцев.
+              </p>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-orange-300">Приоритет: Высокий</span>
+                <span class="text-orange-300">Статус: Планирование</span>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-blue-400/30 bg-blue-500/10 hover:border-blue-400/50 transition-all duration-300">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🛣️</span>
+                </div>
+                <h4 class="text-white font-bold text-lg">Дорожная инфраструктура</h4>
+              </div>
+              <p class="text-blue-200 text-sm mb-4">
+                42% региональных дорог требуют капитального ремонта. Увеличилось количество ДТП на 12% за последний год.
+              </p>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-blue-300">Приоритет: Средний</span>
+                <span class="text-blue-300">Статус: Финансирование</span>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Таб: События октября -->
+        <div v-else-if="activeTab === 'events'" class="space-y-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white flex items-center space-x-3">
+              <span>📅</span>
+              <span>События октября 2025</span>
+            </h3>
+            <span class="text-blue-300 text-sm">Всего событий: {{ octoberNews.length }}</span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <NewsCard
+              v-for="news in octoberNews"
+              :key="news.id"
+              :news="news"
+              @open="openNewsModal"
+            />
+          </div>
+        </div>
+
+        <!-- Таб: Деятельность ГФИ -->
+        <div v-else-if="activeTab === 'gfi'" class="space-y-6">
+          <h3 class="text-xl font-bold text-white mb-6 flex items-center space-x-3">
+            <span>👨‍💼</span>
+            <span>Деятельность Главного федерального инспектора</span>
+          </h3>
+          
+          <div class="space-y-4">
+            <div 
+              v-for="activity in gfiActivities" 
+              :key="activity.id"
+              class="glass rounded-2xl p-6 border border-white/20 hover:border-green-400/50 transition-all duration-300"
+            >
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span class="text-xl">📋</span>
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-white font-semibold text-lg mb-2">{{ activity.title }}</h4>
+                  <p class="text-blue-200 text-sm mb-3">{{ activity.description }}</p>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-blue-300">{{ activity.date }}</span>
+                    <span class="text-green-300 bg-green-500/20 px-2 py-1 rounded-full">{{ activity.status }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Статистика ГФИ -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white mb-1">{{ gfiActivities.length }}</div>
+              <div class="text-green-200 text-xs">Мероприятий</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white mb-1">4</div>
+              <div class="text-blue-200 text-xs">Муниципалитета</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white mb-1">12</div>
+              <div class="text-purple-200 text-xs">Встреч проведено</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white mb-1">85%</div>
+              <div class="text-yellow-200 text-xs">Исполнение</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+
+  
 
     <!-- Модальное окно для новостей -->
     <NewsModal 
@@ -153,10 +218,33 @@ import { ref } from 'vue'
 import NewsCard from '@/components/ui/NewsCard.vue'
 import NewsModal from '@/components/ui/NewsModal.vue'
 
-// ИСПРАВЛЕНИЕ: устанавливаем showNewsModal в false по умолчанию
+const activeTab = ref('problems')
 const showNewsModal = ref(false)
 const selectedNews = ref(null)
 
+// Табы
+const tabs = [
+  {
+    id: 'problems',
+    name: 'Актуальные проблемы',
+    icon: '⚠️',
+    badge: '4'
+  },
+  {
+    id: 'events',
+    name: 'События октября',
+    icon: '📅',
+    badge: '6'
+  },
+  {
+    id: 'gfi',
+    name: 'Деятельность ГФИ',
+    icon: '👨‍💼',
+    badge: null
+  }
+]
+
+// Данные для новостей
 const octoberNews = [
   {
     id: 1,
@@ -308,6 +396,7 @@ const octoberNews = [
   }
 ]
 
+// Данные для деятельности ГФИ
 const gfiActivities = [
   {
     id: 1,
@@ -369,5 +458,15 @@ const closeNewsModal = () => {
 .glass {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+}
+
+/* Стили для скролла табов на мобильных */
+.flex.overflow-x-auto {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.flex.overflow-x-auto::-webkit-scrollbar {
+  display: none;
 }
 </style>
