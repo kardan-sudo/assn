@@ -12,7 +12,7 @@
         <li v-for="item in menuItems" :key="item.name">
           <!-- Обычные пункты меню -->
           <router-link 
-            v-if="!item.children"
+            v-if="!item.children && (!item.requiresAuth || isAuthenticated)"
             :to="item.path" 
             class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white"
             :class="{
@@ -26,11 +26,10 @@
             <div v-if="item.badge" class="ml-auto bg-red-500 text-xs text-white px-2 py-1 rounded-full">
               {{ item.badge }}
             </div>
-            
           </router-link>
 
           <!-- Выпадающий список для "Обстановка" -->
-          <div v-else class="relative">
+          <div v-else-if="item.children && (!item.requiresAuth || isAuthenticated)" class="relative">
             <button
               @click="toggleSituationDropdown"
               class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white w-full text-left"
@@ -74,7 +73,6 @@
                       <span class="text-sm">{{ child.icon }}</span>
                     </div>
                     <span class="text-sm font-medium">{{ child.name }}</span>
-                    
                   </router-link>
                 </div>
               </div>
@@ -116,6 +114,19 @@
             <p class="text-blue-300 text-xs truncate">{{ userRoleText }}</p>
           </div>
         </div>
+      </div>
+
+      <!-- Кнопка входа для неавторизованных -->
+      <div v-else class="mt-6 pt-6 border-t border-white/10">
+        <button 
+          @click="openAuthModal"
+          class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
+        >
+          Войти в систему
+        </button>
+        <p class="text-gray-400 text-xs text-center mt-3">
+          Для доступа к полному функционалу
+        </p>
       </div>
     </nav>
   </aside>
@@ -169,26 +180,26 @@ const menuItems = computed(() => {
           path: '/situation/closed', 
           icon: '🔒',
           description: 'Социально-экономическое развитие',
-          requiresAdmin: true
+          requiresAuth: true
         }
-      ].filter(child => !child.requiresAdmin || authStore.hasAccess('admin'))
+      ]
     },
     { name: 'Системы', path: '/systems', icon: '🔗' }
   ]
 
-  // Добавляем сотрудников только для админов
-  if (authStore.hasAccess('admin')) {
+  // Добавляем сотрудников только для авторизованных пользователей
+  if (isAuthenticated.value) {
     baseItems.splice(4, 0, { 
       name: 'Сотрудники', 
       path: '/staff', 
       icon: '👥',
-      requiresAdmin: true 
+      requiresAuth: true 
     })
   }
 
   // Добавляем ГИС карту для всех авторизованных пользователей
-  if (authStore.isAuthenticated) {
-    baseItems.push({ name: 'ГИС Карта', path: '/gis', icon: '🗺️' })
+  if (isAuthenticated.value) {
+    baseItems.push({ name: 'ГИС Карта', path: '/gis', icon: '🗺️', requiresAuth: true })
   }
 
   return baseItems
@@ -196,6 +207,10 @@ const menuItems = computed(() => {
 
 const toggleSituationDropdown = () => {
   showSituationDropdown.value = !showSituationDropdown.value
+}
+
+const openAuthModal = () => {
+  authStore.showAuthModal = true
 }
 
 // Закрываем dropdown при клике вне его

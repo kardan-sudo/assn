@@ -13,7 +13,7 @@
       <AppHeader />
       
       <div class="flex flex-1 min-h-0">
-        <NavigationSidebar v-if="isAuthenticated" />
+        <NavigationSidebar />
         
         <!-- Основной контент с футером -->
         <div class="flex flex-col flex-1 min-h-0">
