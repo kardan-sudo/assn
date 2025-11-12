@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 bg-gray-900/80 backdrop-blur-lg border-r border-white/10 min-h-screen">
+  <aside class="w-64 bg-gray-900/80 backdrop-blur-lg border-r border-white/10 sticky top-0 h-screen overflow-y-auto flex-shrink-0">
     <nav class="p-6">
       <!-- Заголовок навигации -->
       <div class="mb-8">
@@ -114,6 +114,19 @@
           </div>
         </div>
       </div>
+
+      <!-- Текущий пользователь -->
+      <div v-if="isAuthenticated" class="mt-6 pt-6 border-t border-white/10">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            {{ userInitials }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-semibold truncate">{{ user.name }}</p>
+            <p class="text-blue-300 text-xs truncate">{{ userRoleText }}</p>
+          </div>
+        </div>
+      </div>
     </nav>
   </aside>
 </template>
@@ -131,6 +144,17 @@ const showSituationDropdown = ref(false)
 // Проверяем активна ли какая-либо из дочерних страниц "Обстановка"
 const isSituationActive = computed(() => {
   return route.path.startsWith('/situation')
+})
+
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const user = computed(() => authStore.user)
+const userInitials = computed(() => {
+  if (!user.value?.name) return '?'
+  return user.value.name.split(' ').map(n => n[0]).join('')
+})
+const userRoleText = computed(() => {
+  if (!user.value?.role) return 'Гость'
+  return user.value.role === 'admin' ? 'Администратор' : 'Пользователь'
 })
 
 const menuItems = computed(() => {
@@ -215,6 +239,37 @@ const updateTime = () => {
 </script>
 
 <style scoped>
+/* Стили для фиксированной навигации */
+.sticky {
+  position: sticky;
+  top: 0;
+}
+
+/* Высота на всю видимую область */
+.h-screen {
+  height: 100vh;
+}
+
+/* Кастомная полоса прокрутки для навигации */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Анимации для выпадающего меню */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.3s ease;
