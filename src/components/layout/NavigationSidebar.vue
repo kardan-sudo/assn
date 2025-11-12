@@ -10,7 +10,9 @@
       <!-- Меню -->
       <ul class="space-y-2">
         <li v-for="item in menuItems" :key="item.name">
+          <!-- Обычные пункты меню -->
           <router-link 
+            v-if="!item.children"
             :to="item.path" 
             class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white"
             :class="{
@@ -24,7 +26,70 @@
             <div v-if="item.badge" class="ml-auto bg-red-500 text-xs text-white px-2 py-1 rounded-full">
               {{ item.badge }}
             </div>
+            <span 
+              v-if="item.requiresAdmin" 
+              class="ml-auto bg-red-500/20 text-red-300 text-xs px-2 py-1 rounded-full"
+            >
+              Admin
+            </span>
           </router-link>
+
+          <!-- Выпадающий список для "Обстановка" -->
+          <div v-else class="relative">
+            <button
+              @click="toggleSituationDropdown"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white w-full text-left"
+              :class="{
+                'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-400': isSituationActive
+              }"
+            >
+              <div class="w-6 h-6 flex items-center justify-center">
+                <span class="text-lg">{{ item.icon }}</span>
+              </div>
+              <span class="font-medium">{{ item.name }}</span>
+              <svg 
+                class="w-4 h-4 ml-auto transition-transform duration-300" 
+                :class="{ 'rotate-180': showSituationDropdown }"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <!-- Выпадающее меню -->
+            <transition name="dropdown">
+              <div 
+                v-if="showSituationDropdown"
+                class="ml-4 mt-2 bg-gray-800/90 backdrop-blur-sm rounded-lg border border-white/10 shadow-2xl overflow-hidden"
+              >
+                <div class="py-2 space-y-1">
+                  <router-link
+                    v-for="child in item.children"
+                    :key="child.path"
+                    :to="child.path"
+                    @click="showSituationDropdown = false"
+                    class="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                    :class="{
+                      'bg-blue-500/20 text-white': $route.path === child.path
+                    }"
+                  >
+                    <div class="w-5 h-5 flex items-center justify-center">
+                      <span class="text-sm">{{ child.icon }}</span>
+                    </div>
+                    <span class="text-sm font-medium">{{ child.name }}</span>
+                    <span 
+                      v-if="child.requiresAdmin" 
+                      class="ml-auto bg-red-500/20 text-red-300 text-xs px-2 py-1 rounded-full"
+                    >
+                      Admin
+                    </span>
+                  </router-link>
+                </div>
+              </div>
+            </transition>
+          </div>
         </li>
       </ul>
 
@@ -61,6 +126,12 @@ import { useAuthStore } from '@/stores/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 const currentTime = ref('')
+const showSituationDropdown = ref(false)
+
+// Проверяем активна ли какая-либо из дочерних страниц "Обстановка"
+const isSituationActive = computed(() => {
+  return route.path.startsWith('/situation')
+})
 
 const menuItems = computed(() => {
   const baseItems = [
@@ -68,28 +139,70 @@ const menuItems = computed(() => {
     { name: 'История', path: '/history', icon: '📚' },
     { name: 'Муниципалитеты', path: '/municipalities', icon: '🏛️' },
     { name: 'Госорганы', path: '/government', icon: '⚖️' },
-    { name: 'Обстановка', path: '/situation', icon: '📈', badge: '3' },
+    { 
+      name: 'Обстановка', 
+      icon: '📈', 
+      badge: '2',
+      children: [
+        { 
+          name: 'Открытый раздел', 
+          path: '/situation/open', 
+          icon: '📰',
+          description: 'Обзор событий, СМИ и деятельность ГФИ'
+        },
+        { 
+          name: 'Закрытый раздел', 
+          path: '/situation/closed', 
+          icon: '🔒',
+          description: 'Социально-экономическое развитие',
+          requiresAdmin: true
+        }
+      ].filter(child => !child.requiresAdmin || authStore.hasAccess('admin'))
+    },
     { name: 'Системы', path: '/systems', icon: '🔗' }
   ]
 
-  if (authStore.hasAccess('user')) {
-    baseItems.splice(4, 0, { name: 'Сотрудники', path: '/staff', icon: '👥' })
+  // Добавляем сотрудников только для админов
+  if (authStore.hasAccess('admin')) {
+    baseItems.splice(4, 0, { 
+      name: 'Сотрудники', 
+      path: '/staff', 
+      icon: '👥',
+      requiresAdmin: true 
+    })
+  }
+
+  // Добавляем ГИС карту для всех авторизованных пользователей
+  if (authStore.isAuthenticated) {
     baseItems.push({ name: 'ГИС Карта', path: '/gis', icon: '🗺️' })
   }
 
   return baseItems
 })
 
+const toggleSituationDropdown = () => {
+  showSituationDropdown.value = !showSituationDropdown.value
+}
+
+// Закрываем dropdown при клике вне его
+const handleClickOutside = (event) => {
+  if (!event.target.closest('.relative')) {
+    showSituationDropdown.value = false
+  }
+}
+
 // Обновление времени
 let timeInterval
 
 onMounted(() => {
   updateTime()
-  timeInterval = setInterval(updateTime, 60000) // Каждую минуту
+  timeInterval = setInterval(updateTime, 60000)
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   clearInterval(timeInterval)
+  document.removeEventListener('click', handleClickOutside)
 })
 
 const updateTime = () => {
@@ -100,3 +213,16 @@ const updateTime = () => {
   })
 }
 </script>
+
+<style scoped>
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.3s ease;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>

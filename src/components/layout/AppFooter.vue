@@ -5,7 +5,7 @@
         <!-- Информация -->
         <div class="text-center md:text-left">
           <p class="text-white text-sm">
-            &copy; 2024 Ситуационный центр Губернатора Курской области
+            &copy; 2025 Ситуационный центр Губернатора Курской области
           </p>
           <p class="text-gray-400 text-xs mt-1">
             Версия 2.0 | Последнее обновление: {{ lastUpdate }}

@@ -13,7 +13,9 @@
       <AppHeader />
       
       <div class="flex flex-1">
+        <!-- Показываем навигацию для всех, но разную -->
         <NavigationSidebar v-if="isAuthenticated" />
+        <GuestNavigation v-else />
         
         <main class="flex-1 p-6 transition-all duration-300" :class="{ 'ml-0': !isAuthenticated, 'ml-64': isAuthenticated }">
           <div class="max-w-7xl mx-auto">
@@ -38,6 +40,7 @@ import { useAuthStore } from '@/stores/auth'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import NavigationSidebar from '@/components/layout/NavigationSidebar.vue'
+import GuestNavigation from '@/components/layout/GuestNavigation.vue'
 import AuthModal from '@/components/ui/AuthModal.vue'
 
 const authStore = useAuthStore()
@@ -47,7 +50,6 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
 const showAuthModal = computed(() => authStore.showAuthModal)
 
 onMounted(() => {
-  // Имитация загрузки данных
   setTimeout(() => {
     loading.value = false
   }, 1500)

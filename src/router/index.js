@@ -1,4 +1,3 @@
-// router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -33,11 +32,23 @@ const routes = [
     component: () => import('@/views/StaffView.vue'),
     meta: { requiresAuth: true, title: 'Сотрудники' }
   },
+  // Новые маршруты для Обстановки
+  {
+    path: '/situation/open',
+    name: 'situation-open',
+    component: () => import('@/views/SituationView.vue'),
+    meta: { title: 'Обстановка - Открытый раздел' }
+  },
+  {
+    path: '/situation/closed',
+    name: 'situation-closed',
+    component: () => import('@/views/SituationView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true, title: 'Обстановка - Закрытый раздел' }
+  },
+  // Редирект со старого маршрута
   {
     path: '/situation',
-    name: 'situation',
-    component: () => import('@/views/SituationView.vue'),
-    meta: { title: 'Обстановка' }
+    redirect: '/situation/open'
   },
   {
     path: '/systems',
@@ -61,7 +72,18 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   
+  // Проверка на необходимость авторизации
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    authStore.openAuthModal()
+    return next(false)
+  }
+  
+  // Проверка на права администратора
+  if (to.meta.requiresAdmin && !authStore.hasAccess('admin')) {
+    // Перенаправляем на открытый раздел если нет прав
+    if (to.path.includes('situation')) {
+      return next('/situation/open')
+    }
     authStore.openAuthModal()
     return next(false)
   }
