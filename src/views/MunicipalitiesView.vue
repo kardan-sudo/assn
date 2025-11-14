@@ -18,7 +18,7 @@
           <div class="text-gray-600 font-medium">Муниципальных образований</div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-green-500">
-          <div class="text-3xl font-bold text-green-600 mb-2">1.08 млн. чел.</div>
+          <div class="text-3xl font-bold text-green-600 mb-2">{{ totalPopulation.toLocaleString() }} чел.</div>
           <div class="text-gray-600 font-medium">Общее население</div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-purple-500">
@@ -74,80 +74,104 @@
         </div>
       </div>
 
-      <!-- Сетка муниципальных образований -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
-        <div
-          v-for="municipality in filteredMunicipalities"
-          :key="municipality.id"
-          class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden"
-        >
-          <!-- Заголовок карточки -->
-          <div 
-            class="h-3"
-            :class="getMunicipalityColor(municipality.type)"
-          ></div>
-          
-          <div class="p-6">
-            <div class="flex items-start justify-between mb-4">
-              <div>
-                <h3 class="text-xl font-bold text-gray-800 mb-1">{{ municipality.name }}</h3>
-                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                  {{ municipality.type }}
-                </span>
-              </div>
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
-                {{ municipality.id }}
-              </div>
-            </div>
-
-            <!-- Основная информация -->
-            <div class="space-y-3 mb-4">
-              <div class="flex items-center text-gray-600">
-                <svg class="w-5 h-5 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span class="font-semibold">{{ municipality.population.toLocaleString() }}</span>
-                <span class="text-sm ml-1">человек</span>
-              </div>
-              
-              <div class="flex items-center text-gray-600">
-                <svg class="w-5 h-5 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="font-semibold">{{ municipality.area }}</span>
-                <span class="text-sm ml-1">км²</span>
-              </div>
-              
-              <div class="flex items-center text-gray-600">
-                <svg class="w-5 h-5 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span class="font-medium">{{ municipality.head }}</span>
-              </div>
-            </div>
-
-            <!-- Дополнительная информация -->
-            <div v-if="municipality.details" class="border-t border-gray-100 pt-4">
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div class="text-center">
-                  <div class="font-bold text-gray-800">{{ municipality.details.settlements }}</div>
-                  <div class="text-gray-500">населённых пунктов</div>
-                </div>
-                <div class="text-center">
-                  <div class="font-bold text-gray-800">{{ municipality.details.density }} чел/км²</div>
-                  <div class="text-gray-500">плотность</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Кнопка подробнее -->
-            <button 
-              @click="openModal(municipality)"
-              class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
-            >
-              Подробнее
-            </button>
+      <!-- Сетка муниципальных образований с прокруткой -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">
+            Муниципальные образования 
+            <span class="text-blue-600">({{ filteredMunicipalities.length }})</span>
+          </h2>
+          <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
+            Найдено: {{ filteredMunicipalities.length }} из {{ totalMunicipalities }}
           </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
+          <div
+            v-for="municipality in filteredMunicipalities"
+            :key="municipality.id"
+            class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden"
+          >
+            <!-- Заголовок карточки -->
+            <div 
+              class="h-3"
+              :class="getMunicipalityColor(municipality.type)"
+            ></div>
+            
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-800 mb-1">{{ municipality.name }}</h3>
+                  <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    {{ municipality.type }}
+                  </span>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                  {{ municipality.id }}
+                </div>
+              </div>
+
+              <!-- Основная информация -->
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center text-gray-600">
+                  <svg class="w-5 h-5 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <span class="font-semibold">{{ municipality.population.toLocaleString() }}</span>
+                  <span class="text-sm ml-1">человек</span>
+                </div>
+                
+                <div class="flex items-center text-gray-600">
+                  <svg class="w-5 h-5 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-semibold">{{ municipality.area }}</span>
+                  <span class="text-sm ml-1">км²</span>
+                </div>
+                
+                <div class="flex items-center text-gray-600">
+                  <svg class="w-5 h-5 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="font-medium">{{ municipality.head }}</span>
+                </div>
+              </div>
+
+              <!-- Дополнительная информация -->
+              <div v-if="municipality.details" class="border-t border-gray-100 pt-4">
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div class="text-center">
+                    <div class="font-bold text-gray-800">{{ municipality.details.settlements }}</div>
+                    <div class="text-gray-500">населённых пунктов</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="font-bold text-gray-800">{{ municipality.details.density }} чел/км²</div>
+                    <div class="text-gray-500">плотность</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Кнопка подробнее -->
+              <button 
+                @click="openModal(municipality)"
+                class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
+              >
+                Подробнее
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Сообщение если ничего не найдено -->
+        <div 
+          v-if="filteredMunicipalities.length === 0"
+          class="text-center py-12 text-gray-500"
+        >
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-lg font-medium">Муниципальные образования не найдены</p>
+          <p class="text-sm mt-2">Попробуйте изменить параметры поиска или фильтры</p>
         </div>
       </div>
 
@@ -238,7 +262,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useDataStore } from '@/stores/data'
 
 const dataStore = useDataStore()
@@ -318,3 +342,44 @@ onMounted(() => {
   })
 })
 </script>
+
+<style scoped>
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Плавная прокрутка */
+.custom-scrollbar {
+  scroll-behavior: smooth;
+}
+
+/* Анимация для карточек */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

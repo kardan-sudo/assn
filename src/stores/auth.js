@@ -1,4 +1,3 @@
-// stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
@@ -15,6 +14,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!user.value)
   const userRole = computed(() => user.value?.role || 'guest')
+  const isAdmin = computed(() => user.value?.role === 'admin')
 
   const login = (username, password) => {
     const foundUser = predefinedUsers.find(u => 
@@ -43,9 +43,15 @@ export const useAuthStore = defineStore('auth', () => {
     showAuthModal.value = false
   }
 
+  // Проверка доступа для разных ролей
   const hasAccess = (requiredRole) => {
     const roles = { 'guest': 0, 'user': 1, 'admin': 2 }
     return roles[userRole.value] >= roles[requiredRole]
+  }
+
+  // Проверка является ли пользователь администратором
+  const isUserAdmin = () => {
+    return user.value?.role === 'admin'
   }
 
   return {
@@ -53,10 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
     showAuthModal,
     isAuthenticated,
     userRole,
+    isAdmin,
     login,
     logout,
     openAuthModal,
     closeAuthModal,
-    hasAccess
+    hasAccess,
+    isUserAdmin
   }
 })

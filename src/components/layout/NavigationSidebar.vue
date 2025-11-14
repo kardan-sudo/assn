@@ -12,7 +12,7 @@
         <li v-for="item in menuItems" :key="item.name">
           <!-- Обычные пункты меню -->
           <router-link 
-            v-if="!item.children && (!item.requiresAuth || isAuthenticated)"
+            v-if="!item.children && hasAccess(item)"
             :to="item.path" 
             class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white"
             :class="{
@@ -29,9 +29,9 @@
           </router-link>
 
           <!-- Выпадающий список для "Обстановка" -->
-          <div v-else-if="item.children && (!item.requiresAuth || isAuthenticated)" class="relative">
+          <div v-else-if="item.name === 'Обстановка' && hasAccess(item)" class="relative">
             <button
-              @click="toggleSituationDropdown"
+              @click="toggleDropdown('situation')"
               class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white w-full text-left"
               :class="{
                 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-400': isSituationActive
@@ -43,7 +43,7 @@
               <span class="font-medium">{{ item.name }}</span>
               <svg 
                 class="w-4 h-4 ml-auto transition-transform duration-300" 
-                :class="{ 'rotate-180': showSituationDropdown }"
+                :class="{ 'rotate-180': activeDropdown === 'situation' }"
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -55,7 +55,7 @@
             <!-- Выпадающее меню -->
             <transition name="dropdown">
               <div 
-                v-if="showSituationDropdown"
+                v-if="activeDropdown === 'situation'"
                 class="ml-4 mt-2 bg-gray-800/90 backdrop-blur-sm rounded-lg border border-white/10 shadow-2xl overflow-hidden"
               >
                 <div class="py-2 space-y-1">
@@ -63,7 +63,62 @@
                     v-for="child in item.children"
                     :key="child.path"
                     :to="child.path"
-                    @click="showSituationDropdown = false"
+                    @click="activeDropdown = null"
+                    v-show="hasAccess(child)"
+                    class="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                    :class="{
+                      'bg-blue-500/20 text-white': $route.path === child.path
+                    }"
+                  >
+                    <div class="w-5 h-5 flex items-center justify-center">
+                      <span class="text-sm">{{ child.icon }}</span>
+                    </div>
+                    <span class="text-sm font-medium">{{ child.name }}</span>
+                    <span v-if="child.requiresAdmin" class="ml-auto text-xs bg-yellow-500 text-white px-2 py-1 rounded-full">
+                      ADMIN
+                    </span>
+                  </router-link>
+                </div>
+              </div>
+            </transition>
+          </div>
+
+          <!-- Выпадающий список для "Госорганы" -->
+          <div v-else-if="item.name === 'Госорганы' && hasAccess(item)" class="relative">
+            <button
+              @click="toggleDropdown('government')"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white w-full text-left"
+              :class="{
+                'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-400': isGovernmentActive
+              }"
+            >
+              <div class="w-6 h-6 flex items-center justify-center">
+                <span class="text-lg">{{ item.icon }}</span>
+              </div>
+              <span class="font-medium">{{ item.name }}</span>
+              <svg 
+                class="w-4 h-4 ml-auto transition-transform duration-300" 
+                :class="{ 'rotate-180': activeDropdown === 'government' }"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <!-- Выпадающее меню -->
+            <transition name="dropdown">
+              <div 
+                v-if="activeDropdown === 'government'"
+                class="ml-4 mt-2 bg-gray-800/90 backdrop-blur-sm rounded-lg border border-white/10 shadow-2xl overflow-hidden"
+              >
+                <div class="py-2 space-y-1">
+                  <router-link
+                    v-for="child in item.children"
+                    :key="child.path"
+                    :to="child.path"
+                    @click="activeDropdown = null"
                     class="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     :class="{
                       'bg-blue-500/20 text-white': $route.path === child.path
@@ -106,13 +161,26 @@
       <!-- Текущий пользователь -->
       <div v-if="isAuthenticated" class="mt-6 pt-6 border-t border-white/10">
         <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+          <div 
+            class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+            :class="{
+              'bg-gradient-to-br from-blue-400 to-purple-500': !isAdmin,
+              'bg-gradient-to-br from-red-400 to-orange-500': isAdmin
+            }"
+          >
             {{ userInitials }}
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-white text-sm font-semibold truncate">{{ user.name }}</p>
-            <p class="text-blue-300 text-xs truncate">{{ userRoleText }}</p>
+            <p class="text-xs truncate" :class="isAdmin ? 'text-orange-300' : 'text-blue-300'">
+              {{ userRoleText }}
+            </p>
           </div>
+        </div>
+        
+        <!-- Бейдж администратора -->
+        <div v-if="isAdmin" class="mt-2 bg-red-500/20 border border-red-500/30 rounded-lg px-3 py-1">
+          <p class="text-red-300 text-xs font-semibold text-center">Администратор системы</p>
         </div>
       </div>
 
@@ -140,14 +208,19 @@ import { useAuthStore } from '@/stores/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 const currentTime = ref('')
-const showSituationDropdown = ref(false)
+const activeDropdown = ref(null)
 
-// Проверяем активна ли какая-либо из дочерних страниц "Обстановка"
+// Проверяем активна ли какая-либо из дочерних страниц
 const isSituationActive = computed(() => {
   return route.path.startsWith('/situation')
 })
 
+const isGovernmentActive = computed(() => {
+  return route.path.startsWith('/government')
+})
+
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAdmin = computed(() => authStore.isAdmin)
 const user = computed(() => authStore.user)
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'
@@ -158,16 +231,56 @@ const userRoleText = computed(() => {
   return user.value.role === 'admin' ? 'Администратор' : 'Пользователь'
 })
 
+// Функция проверки доступа к пункту меню
+const hasAccess = (menuItem) => {
+  // Если пункт требует авторизации, но пользователь не авторизован
+  if (menuItem.requiresAuth && !isAuthenticated.value) {
+    return false
+  }
+  
+  // Если пункт требует прав администратора
+  if (menuItem.requiresAdmin && !isAdmin.value) {
+    return false
+  }
+  
+  // Для дочерних элементов в выпадающем меню
+  if (menuItem.children) {
+    return menuItem.children.some(child => hasAccess(child))
+  }
+  
+  return true
+}
+
 const menuItems = computed(() => {
   const baseItems = [
     { name: 'Главная', path: '/', icon: '📊' },
     { name: 'История', path: '/history', icon: '📚' },
     { name: 'Муниципалитеты', path: '/municipalities', icon: '🏛️' },
-    { name: 'Госорганы', path: '/government', icon: '⚖️' },
+    { 
+      name: 'Госорганы', 
+      icon: '⚖️',
+      children: [
+        { 
+          name: 'Исполнительная власть', 
+          path: '/government/executive', 
+          icon: '🏢'
+        },
+        { 
+          name: 'Законодательная власть', 
+          path: '/government/legislative', 
+          icon: '📜'
+        },
+        { 
+          name: 'Судебная власть', 
+          path: '/government/judicial', 
+          icon: '⚖️'
+        }
+      ]
+    },
     { 
       name: 'Обстановка', 
       icon: '📈', 
-      badge: '2',
+      badge: isAdmin.value ? '2' : '1',
       children: [
         { 
           name: 'Открытый раздел', 
@@ -180,43 +293,43 @@ const menuItems = computed(() => {
           path: '/situation/closed', 
           icon: '🔒',
           description: 'Социально-экономическое развитие',
-          requiresAuth: true
+          requiresAuth: true,
+          requiresAdmin: true
         }
       ]
     },
-    { name: 'Системы', path: '/systems', icon: '🔗' }
-  ]
-
-  // Добавляем сотрудников только для авторизованных пользователей
-  if (isAuthenticated.value) {
-    baseItems.splice(4, 0, { 
+    { 
       name: 'Сотрудники', 
       path: '/staff', 
       icon: '👥',
-      requiresAuth: true 
-    })
-  }
+      requiresAuth: true,
+      requiresAdmin: true
+    },
+    { name: 'Системы', path: '/systems', icon: '🔗' },
+    { 
+      name: 'ГИС Карта', 
+      path: '/gis', 
+      icon: '🗺️', 
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  ]
 
-  // Добавляем ГИС карту для всех авторизованных пользователей
-  if (isAuthenticated.value) {
-    baseItems.push({ name: 'ГИС Карта', path: '/gis', icon: '🗺️', requiresAuth: true })
-  }
-
-  return baseItems
+  return baseItems.filter(item => hasAccess(item))
 })
 
-const toggleSituationDropdown = () => {
-  showSituationDropdown.value = !showSituationDropdown.value
+const toggleDropdown = (dropdownName) => {
+  activeDropdown.value = activeDropdown.value === dropdownName ? null : dropdownName
 }
 
 const openAuthModal = () => {
-  authStore.showAuthModal = true
+  authStore.openAuthModal()
 }
 
 // Закрываем dropdown при клике вне его
 const handleClickOutside = (event) => {
   if (!event.target.closest('.relative')) {
-    showSituationDropdown.value = false
+    activeDropdown.value = null
   }
 }
 

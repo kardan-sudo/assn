@@ -22,9 +22,22 @@ const routes = [
   },
   {
     path: '/government',
-    name: 'government',
-    component: () => import('@/views/GovernmentView.vue'),
-    meta: { title: 'Государственные органы' }
+    redirect: '/government/executive'
+  },
+  {
+    path: '/government/executive',
+    name: 'GovernmentExecutive',
+    component: () => import('@/views/GovernmentExecutive.vue')
+  },
+  {
+    path: '/government/legislative',
+    name: 'GovernmentLegislative', 
+    component: () => import('@/views/GovernmentLegislative.vue')
+  },
+  {
+    path: '/government/judicial',
+    name: 'GovernmentJudicial',
+    component: () => import('@/views/GovernmentJudicial.vue')
   },
   {
     path: '/staff',
