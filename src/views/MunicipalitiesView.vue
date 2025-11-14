@@ -175,26 +175,99 @@
         </div>
       </div>
 
-      <!-- Карта региона -->
+      <!-- Интерактивная карта -->
       <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-          <svg class="w-6 h-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-          </svg>
-          Географическое расположение
-        </h2>
-        <div class="bg-gray-100 rounded-xl h-64 flex items-center justify-center">
-          <div class="text-center text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+            <svg class="w-6 h-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
-            <p>Интерактивная карта муниципальных образований Курской области</p>
+            Интерактивная карта муниципальных образований
+          </h2>
+          <div class="flex gap-2">
+            <button 
+              @click="resetMapView"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            >
+              Сбросить вид
+            </button>
+            <button 
+              @click="toggleSatelliteView"
+              class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+            >
+              {{ satelliteView ? 'Схема' : 'Спутник' }}
+            </button>
+          </div>
+        </div>
+        
+        <!-- Контейнер для карты -->
+        <div ref="mapContainer" class="w-full h-96 rounded-xl overflow-hidden shadow-lg relative border border-gray-200">
+          <!-- Здесь будет отрисовываться карта -->
+        </div>
+
+        <!-- Легенда карты -->
+        <div class="mt-4 flex flex-wrap gap-4 justify-center">
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Городские округа</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Муниципальные районы</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Городские поселения</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-orange-500 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Сельские поселения</span>
+          </div>
+        </div>
+
+        <!-- Информация о выбранном муниципалитете -->
+        <div v-if="selectedMapMunicipality" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg font-semibold text-blue-800 mb-2">
+                {{ selectedMapMunicipality.name }}
+              </h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span class="text-blue-600 font-medium">Тип:</span>
+                  <p>{{ selectedMapMunicipality.type }}</p>
+                </div>
+                <div>
+                  <span class="text-blue-600 font-medium">Население:</span>
+                  <p>{{ selectedMapMunicipality.population.toLocaleString() }} чел.</p>
+                </div>
+                <div>
+                  <span class="text-blue-600 font-medium">Площадь:</span>
+                  <p>{{ selectedMapMunicipality.area }} км²</p>
+                </div>
+                <div>
+                  <span class="text-blue-600 font-medium">Глава:</span>
+                  <p>{{ selectedMapMunicipality.head }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              
+              <button 
+                @click="selectedMapMunicipality = null"
+                class="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно для карточки -->
     <div v-if="selectedMunicipality" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6">
@@ -258,18 +331,156 @@
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно для карты -->
+    <div v-if="selectedMapModalMunicipality" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+              <svg class="w-6 h-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {{ selectedMapModalMunicipality.name }} - Детальная информация
+            </h2>
+            <button @click="closeMapModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Левая колонка - основная информация -->
+            <div>
+              <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 mb-6">
+                <h3 class="text-lg font-semibold text-blue-800 mb-4">Основные характеристики</h3>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Тип муниципального образования:</span>
+                    <span class="font-semibold text-blue-700">{{ selectedMapModalMunicipality.type }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Численность населения:</span>
+                    <span class="font-semibold text-green-700">{{ selectedMapModalMunicipality.population.toLocaleString() }} чел.</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Территория:</span>
+                    <span class="font-semibold text-purple-700">{{ selectedMapModalMunicipality.area }} км²</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Плотность населения:</span>
+                    <span class="font-semibold text-orange-700">
+                      {{ selectedMapModalMunicipality.details?.density || Math.round(selectedMapModalMunicipality.population / selectedMapModalMunicipality.area) }} чел/км²
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4">Руководство</h3>
+                <div class="space-y-3">
+                  <div class="flex items-center">
+                    <svg class="w-5 h-5 text-green-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <div>
+                      <p class="font-semibold text-gray-800">Глава муниципального образования</p>
+                      <p class="text-gray-600">{{ selectedMapModalMunicipality.head }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Правая колонка - дополнительная информация -->
+            <div>
+              <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 mb-6">
+                <h3 class="text-lg font-semibold text-purple-800 mb-4">Контактные данные</h3>
+                <div class="space-y-4">
+                  <div class="flex items-start">
+                    <svg class="w-5 h-5 text-purple-600 mr-3 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <div>
+                      <p class="font-medium text-gray-800">Телефон</p>
+                      <p class="text-gray-600">+7 (4712) 123-456</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start">
+                    <svg class="w-5 h-5 text-purple-600 mr-3 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                      <p class="font-medium text-gray-800">Электронная почта</p>
+                      <p class="text-gray-600">admin@{{ selectedMapModalMunicipality.name.toLowerCase().replace(/\s+/g, '-') }}.ru</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start">
+                    <svg class="w-5 h-5 text-purple-600 mr-3 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <div>
+                      <p class="font-medium text-gray-800">Адрес</p>
+                      <p class="text-gray-600">г. {{ selectedMapModalMunicipality.name.includes('город') ? selectedMapModalMunicipality.name.replace('город ', '') : selectedMapModalMunicipality.name }}, ул. Центральная, 1</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-orange-800 mb-4">Статистика</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="text-center">
+                    <div class="text-2xl font-bold text-orange-600">
+                      {{ selectedMapModalMunicipality.details?.settlements || '15' }}
+                    </div>
+                    <div class="text-sm text-gray-600">населённых пунктов</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-2xl font-bold text-orange-600">
+                      {{ selectedMapModalMunicipality.details?.density || Math.round(selectedMapModalMunicipality.population / selectedMapModalMunicipality.area) }}
+                    </div>
+                    <div class="text-sm text-gray-600">чел/км² плотность</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useDataStore } from '@/stores/data'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+// Исправление для иконок Leaflet в Vite
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+})
 
 const dataStore = useDataStore()
 const searchQuery = ref('')
 const selectedType = ref('')
 const sortBy = ref('name')
 const selectedMunicipality = ref(null)
+const selectedMapMunicipality = ref(null)
+const selectedMapModalMunicipality = ref(null)
+const mapContainer = ref(null)
+const satelliteView = ref(false)
+
+let map = null
+let markers = []
 
 // Общая статистика
 const totalMunicipalities = computed(() => dataStore.municipalities.length)
@@ -284,7 +495,6 @@ const totalArea = computed(() =>
 const filteredMunicipalities = computed(() => {
   let filtered = dataStore.municipalities
 
-  // Фильтрация по поисковому запросу
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(m => 
@@ -294,12 +504,10 @@ const filteredMunicipalities = computed(() => {
     )
   }
 
-  // Фильтрация по типу
   if (selectedType.value) {
     filtered = filtered.filter(m => m.type === selectedType.value)
   }
 
-  // Сортировка
   filtered = [...filtered].sort((a, b) => {
     if (sortBy.value === 'population') {
       return b.population - a.population
@@ -324,22 +532,198 @@ const getMunicipalityColor = (type) => {
   return colors[type] || 'bg-gradient-to-r from-gray-500 to-gray-600'
 }
 
-// Модальное окно
+// Получение цвета маркера для карты
+const getMarkerColor = (type) => {
+  const colors = {
+    'городской округ': '#3b82f6', // blue-500
+    'муниципальный район': '#10b981', // green-500
+    'городское поселение': '#8b5cf6', // purple-500
+    'сельское поселение': '#f59e0b' // orange-500
+  }
+  return colors[type] || '#6b7280'
+}
+
+// Создание кастомных иконок для маркеров
+const createCustomIcon = (color) => {
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: ${color};
+        width: 20px;
+        height: 20px;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      "></div>
+    `,
+    className: 'custom-marker',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  })
+}
+
+// Инициализация карты
+const initMap = async () => {
+  await nextTick()
+  
+  if (!mapContainer.value) return
+
+  try {
+    // Уничтожаем старую карту если существует
+    if (map) {
+      map.remove()
+    }
+
+    // Создаем карту
+    map = L.map(mapContainer.value, {
+      attributionControl: false // Отключаем стандартный контроль атрибуции
+    }).setView([51.7304, 36.1926], 9) // Центр Курской области
+
+    // Добавляем слой OpenStreetMap
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18
+    })
+
+    // Добавляем слой спутниковых снимков
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '© Esri, Maxar, Earthstar Geographics',
+      maxZoom: 18
+    })
+
+    // Добавляем основной слой
+    osmLayer.addTo(map)
+
+    // Сохраняем ссылки на слои
+    map.osmLayer = osmLayer
+    map.satelliteLayer = satelliteLayer
+
+    // Добавляем маркеры для муниципалитетов
+    addMunicipalityMarkers()
+
+    
+
+  } catch (error) {
+    console.error('Ошибка инициализации карты:', error)
+  }
+}
+
+// Добавление маркеров муниципалитетов
+const addMunicipalityMarkers = () => {
+  // Очищаем старые маркеры
+  markers.forEach(marker => map.removeLayer(marker))
+  markers = []
+
+  dataStore.municipalities.forEach(municipality => {
+    // Генерируем случайные координаты в пределах Курской области
+    const lat = 51.5 + Math.random() * 0.5 // 51.5 - 52.0
+    const lng = 35.5 + Math.random() * 1.5 // 35.5 - 37.0
+
+    const color = getMarkerColor(municipality.type)
+    const icon = createCustomIcon(color)
+
+    const marker = L.marker([lat, lng], { icon })
+      .addTo(map)
+      .bindPopup(`
+        <div class="p-2 min-w-[200px]">
+          <h3 class="font-bold text-lg mb-2">${municipality.name}</h3>
+          <div class="space-y-1 text-sm">
+            <p><strong>Тип:</strong> ${municipality.type}</p>
+            <p><strong>Население:</strong> ${municipality.population.toLocaleString()} чел.</p>
+            <p><strong>Площадь:</strong> ${municipality.area} км²</p>
+            <p><strong>Глава:</strong> ${municipality.head}</p>
+          </div>
+          
+        </div>
+      `)
+
+    // Обработчики событий для маркера
+    marker.on('mouseover', () => {
+      selectedMapMunicipality.value = municipality
+    })
+
+    marker.on('mouseout', () => {
+      // Не сбрасываем сразу, чтобы пользователь мог прочитать информацию
+      setTimeout(() => {
+        if (selectedMapMunicipality.value?.id === municipality.id) {
+          selectedMapMunicipality.value = null
+        }
+      }, 3000)
+    })
+
+    markers.push(marker)
+  })
+
+  // Обработчик для кнопки в popup
+  mapContainer.value.addEventListener('openMapModal', (event) => {
+    openMapModal(event.detail)
+  })
+}
+
+// Открытие модального окна для карты
+const openMapModal = (municipality) => {
+  selectedMapModalMunicipality.value = municipality
+}
+
+// Закрытие модального окна для карты
+const closeMapModal = () => {
+  selectedMapModalMunicipality.value = null
+}
+
+// Открытие модального окна для карточки
 const openModal = (municipality) => {
   selectedMunicipality.value = municipality
 }
 
+// Закрытие модального окна для карточки
 const closeModal = () => {
   selectedMunicipality.value = null
 }
 
-// Закрытие модального окна по ESC
+// Сброс вида карты
+const resetMapView = () => {
+  if (map) {
+    map.setView([51.7304, 36.1926], 9)
+    selectedMapMunicipality.value = null
+  }
+}
+
+// Переключение вида карты
+const toggleSatelliteView = () => {
+  satelliteView.value = !satelliteView.value
+  
+  if (map) {
+    if (satelliteView.value) {
+      map.removeLayer(map.osmLayer)
+      map.satelliteLayer.addTo(map)
+    } else {
+      map.removeLayer(map.satelliteLayer)
+      map.osmLayer.addTo(map)
+    }
+  }
+}
+
+// Закрытие модальных окон по ESC
 onMounted(() => {
+  initMap()
+  
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && selectedMunicipality.value) {
-      closeModal()
+    if (e.key === 'Escape') {
+      if (selectedMunicipality.value) {
+        closeModal()
+      }
+      if (selectedMapModalMunicipality.value) {
+        closeMapModal()
+      }
     }
   })
+})
+
+onUnmounted(() => {
+  // Очистка карты при размонтировании компонента
+  if (map) {
+    map.remove()
+  }
 })
 </script>
 
@@ -367,12 +751,10 @@ onMounted(() => {
   background: #a0aec0;
 }
 
-/* Плавная прокрутка */
 .custom-scrollbar {
   scroll-behavior: smooth;
 }
 
-/* Анимация для карточек */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -381,5 +763,18 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Стили для кастомных маркеров */
+:deep(.custom-marker) {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Стили для убранной нижней полосы */
+:deep(.leaflet-control-attribution) {
+  background: rgba(255, 255, 255, 0.8) !important;
+  font-size: 10px !important;
+  padding: 2px 5px !important;
 }
 </style>

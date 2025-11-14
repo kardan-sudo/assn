@@ -4,7 +4,7 @@
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2">
         <h1 class="text-3xl font-bold text-white mb-2">Ситуационный центр Курской области</h1>
-        <p class="text-blue-200 text-lg">Октябрь 2025 • Оперативный мониторинг</p>
+
       </div>
       
       <!-- Быстрые показатели -->
@@ -25,7 +25,7 @@
     <section class="glass rounded-2xl border border-white/20 overflow-hidden">
       <!-- Заголовок табов -->
       <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 p-6 border-b border-white/10">
-        <h2 class="text-2xl font-bold text-white">Оперативная информация</h2>
+        <h2 class="text-2xl font-bold text-white">Актуальная информация</h2>
         <p class="text-blue-200 mt-2">Актуальные данные по ключевым направлениям</p>
       </div>
 
@@ -135,7 +135,7 @@
           <div class="flex items-center justify-between mb-6">
             <h3 class="text-xl font-bold text-white flex items-center space-x-3">
               <span>📅</span>
-              <span>События октября 2025</span>
+              <span>Последние события</span>
             </h3>
             <span class="text-blue-300 text-sm">Всего событий: {{ octoberNews.length }}</span>
           </div>
@@ -232,7 +232,7 @@ const tabs = [
   },
   {
     id: 'events',
-    name: 'События октября',
+    name: 'Послдение события',
     icon: '📅',
     badge: '6'
   },
