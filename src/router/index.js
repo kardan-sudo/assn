@@ -93,18 +93,18 @@ const routes = [
     component: () => import('@/views/ReportsView.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
-  // {
-  //   path: '/situation/closed/statistics',
-  //   name: 'SituationClosedStatistics',
-  //   component: () => import('@/views/StatisticsView.vue'),
-  //   meta: { requiresAuth: true, requiresAdmin: true }
-  // },
-  // {
-  //   path: '/situation/closed/media',
-  //   name: 'SituationClosedMedia',
-  //   component: () => import('@/views/MediaView.vue'),
-  //   meta: { requiresAuth: true, requiresAdmin: true }
-  // },
+  {
+    path: '/situation/closed/statistics',
+    name: 'SituationClosedStatistics',
+    component: () => import('@/views/StatisticsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/situation/closed/media',
+    name: 'SituationClosedMedia',
+    component: () => import('@/views/MediaView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
   {
     path: '/systems',
     name: 'systems',
