@@ -16,7 +16,7 @@
             :to="item.path" 
             class="flex items-center space-x-3 px-4 py-3 text-gray-300 rounded-xl transition-all duration-300 group hover:bg-white/10 hover:text-white"
             :class="{
-              'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-400': $route.path === item.path
+              'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-400': isRouteActive(item.path)
             }"
           >
             <div class="w-6 h-6 flex items-center justify-center">
@@ -52,15 +52,19 @@
               </svg>
             </button>
 
-            <!-- Выпадающее меню -->
+            <!-- Выпадающее меню для Обстановки -->
             <transition name="dropdown">
               <div 
                 v-if="activeDropdown === 'situation'"
                 class="ml-4 mt-2 bg-gray-800/90 backdrop-blur-sm rounded-lg border border-white/10 shadow-2xl overflow-hidden"
               >
                 <div class="py-2 space-y-1">
+                  <!-- Открытый раздел -->
+                  <div class="px-3 pt-2 pb-1">
+                    <p class="text-xs font-semibold text-blue-300 uppercase tracking-wide">📰 Открытый раздел</p>
+                  </div>
                   <router-link
-                    v-for="child in item.children"
+                    v-for="child in item.children.open"
                     :key="child.path"
                     :to="child.path"
                     @click="activeDropdown = null"
@@ -74,9 +78,30 @@
                       <span class="text-sm">{{ child.icon }}</span>
                     </div>
                     <span class="text-sm font-medium">{{ child.name }}</span>
-                    <span v-if="child.requiresAdmin" class="ml-auto text-xs bg-yellow-500 text-white px-2 py-1 rounded-full">
-                      ADMIN
-                    </span>
+                  </router-link>
+
+                  <!-- Закрытый раздел -->
+                  <div class="px-3 pt-3 pb-1 border-t border-white/10 mt-2">
+                    <p class="text-xs font-semibold text-purple-300 uppercase tracking-wide">🔒 Закрытый раздел</p>
+                  </div>
+                  <router-link
+                    v-for="child in item.children.closed"
+                    :key="child.path"
+                    :to="child.path"
+                    @click="activeDropdown = null"
+                    v-show="hasAccess(child)"
+                    class="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                    :class="{
+                      'bg-blue-500/20 text-white': $route.path === child.path
+                    }"
+                  >
+                    <div class="w-5 h-5 flex items-center justify-center">
+                      <span class="text-sm">{{ child.icon }}</span>
+                    </div>
+                    <span class="text-sm font-medium">{{ child.name }}</span>
+                    <div v-if="child.requiresAdmin" class="ml-auto">
+                      <span class="text-xs bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded">Admin</span>
+                    </div>
                   </router-link>
                 </div>
               </div>
@@ -107,7 +132,7 @@
               </svg>
             </button>
 
-            <!-- Выпадающее меню -->
+            <!-- Выпадающее меню для Госорганов -->
             <transition name="dropdown">
               <div 
                 v-if="activeDropdown === 'government'"
@@ -219,6 +244,10 @@ const isGovernmentActive = computed(() => {
   return route.path.startsWith('/government')
 })
 
+const isRouteActive = (path) => {
+  return route.path === path
+}
+
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isAdmin = computed(() => authStore.isAdmin)
 const user = computed(() => authStore.user)
@@ -245,6 +274,10 @@ const hasAccess = (menuItem) => {
   
   // Для дочерних элементов в выпадающем меню
   if (menuItem.children) {
+    if (menuItem.children.open) {
+      return menuItem.children.open.some(child => hasAccess(child)) || 
+             menuItem.children.closed.some(child => hasAccess(child))
+    }
     return menuItem.children.some(child => hasAccess(child))
   }
   
@@ -280,23 +313,49 @@ const menuItems = computed(() => {
     { 
       name: 'Обстановка', 
       icon: '📈', 
-      badge: isAdmin.value ? '2' : '1',
-      children: [
-        { 
-          name: 'Открытый раздел', 
-          path: '/situation/open', 
-          icon: '📰',
-          description: 'Обзор событий, СМИ и деятельность ГФИ'
-        },
-        { 
-          name: 'Закрытый раздел', 
-          path: '/situation/closed', 
-          icon: '🔒',
-          description: 'Социально-экономическое развитие',
-          requiresAuth: true,
-          requiresAdmin: true
-        }
-      ]
+      badge: isAdmin.value ? '6' : '3',
+      children: {
+        open: [
+          { 
+            name: 'Обзор событий', 
+            path: '/situation/open/events', 
+            icon: '📅'
+          },
+          { 
+            name: 'Актуальные проблемы', 
+            path: '/situation/open/problems', 
+            icon: '⚠️'
+          },
+          { 
+            name: 'Деятельность ГФИ', 
+            path: '/situation/open/gfi', 
+            icon: '👨‍💼'
+          }
+        ],
+        closed: [
+          { 
+            name: 'Аналитические отчеты', 
+            path: '/situation/closed/reports', 
+            icon: '📊',
+            requiresAuth: true,
+            requiresAdmin: true
+          },
+          { 
+            name: 'Статистика', 
+            path: '/situation/closed/statistics', 
+            icon: '📋',
+            requiresAuth: true,
+            requiresAdmin: true
+          },
+          { 
+            name: 'Мониторинг СМИ', 
+            path: '/situation/closed/media', 
+            icon: '📺',
+            requiresAuth: true,
+            requiresAdmin: true
+          }
+        ]
+      }
     },
     { 
       name: 'Сотрудники', 

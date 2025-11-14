@@ -47,21 +47,36 @@
           <div v-if="isAuthenticated" class="flex items-center space-x-3">
             <div class="text-right text-white hidden sm:block">
               <div class="font-semibold text-sm">{{ user.name }}</div>
-              <div class="text-xs opacity-70 capitalize">{{ user.role }}</div>
+              <div class="text-xs opacity-70 capitalize">
+                {{ user.role === 'admin' ? 'Администратор' : 'Пользователь' }}
+              </div>
             </div>
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 border-white/20">
+            <div 
+              class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 border-white/20"
+              :class="user.role === 'admin' 
+                ? 'bg-gradient-to-br from-red-400 to-orange-500' 
+                : 'bg-gradient-to-br from-blue-400 to-purple-500'
+              "
+            >
               {{ user.name.split(' ').map(n => n[0]).join('') }}
             </div>
           </div>
 
-          <!-- Кнопка входа -->
-          <button
-            v-else
-            @click="openAuthModal"
-            class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Войти в систему
-          </button>
+          <!-- Кнопки входа/регистрации -->
+          <div v-else class="flex items-center space-x-2">
+            <button
+              @click="openRegisterModal"
+              class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
+            >
+              Регистрация
+            </button>
+            <button
+              @click="openLoginModal"
+              class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
+            >
+              Войти
+            </button>
+          </div>
 
           <!-- Кнопка выхода -->
           <button
@@ -90,7 +105,8 @@ const currentTime = ref('')
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const user = computed(() => authStore.user)
 
-const openAuthModal = () => authStore.openAuthModal()
+const openLoginModal = () => authStore.openAuthModal('login')
+const openRegisterModal = () => authStore.openAuthModal('register')
 const logout = () => authStore.logout()
 
 // Обновление времени в реальном времени

@@ -63,6 +63,48 @@ const routes = [
     path: '/situation',
     redirect: '/situation/open'
   },
+   {
+    path: '/situation/open',
+    redirect: '/situation/open/events'
+  },
+  {
+    path: '/situation/open/events',
+    name: 'SituationOpenEvents',
+    component: () => import('@/views/EventsView.vue')
+  },
+  {
+    path: '/situation/open/problems',
+    name: 'SituationOpenProblems',
+    component: () => import('@/views/ProblemsView.vue')
+  },
+  {
+    path: '/situation/open/gfi',
+    name: 'SituationOpenGFI',
+    component: () => import('@/views/GFIView.vue')
+  },
+  // Закрытый раздел Обстановки
+  {
+    path: '/situation/closed',
+    redirect: '/situation/closed/reports'
+  },
+  {
+    path: '/situation/closed/reports',
+    name: 'SituationClosedReports',
+    component: () => import('@/views/ReportsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  // {
+  //   path: '/situation/closed/statistics',
+  //   name: 'SituationClosedStatistics',
+  //   component: () => import('@/views/StatisticsView.vue'),
+  //   meta: { requiresAuth: true, requiresAdmin: true }
+  // },
+  // {
+  //   path: '/situation/closed/media',
+  //   name: 'SituationClosedMedia',
+  //   component: () => import('@/views/MediaView.vue'),
+  //   meta: { requiresAuth: true, requiresAdmin: true }
+  // },
   {
     path: '/systems',
     name: 'systems',
