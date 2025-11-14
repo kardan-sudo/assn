@@ -99,9 +99,6 @@
                       <span class="text-sm">{{ child.icon }}</span>
                     </div>
                     <span class="text-sm font-medium">{{ child.name }}</span>
-                    <div v-if="child.requiresAdmin" class="ml-auto">
-                      <span class="text-xs bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded">Admin</span>
-                    </div>
                   </router-link>
                 </div>
               </div>
