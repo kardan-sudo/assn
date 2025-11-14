@@ -78,6 +78,15 @@ const routes = [
     component: () => import('@/views/ProblemsView.vue')
   },
   {
+  path: '/moderation',
+  name: 'Moderation',
+  component: () => import('@/views/ModerationPanel.vue'),
+  meta: {
+    requiresAuth: true,
+    requiresAdmin: true
+  }
+},
+  {
     path: '/situation/open/gfi',
     name: 'SituationOpenGFI',
     component: () => import('@/views/GFIView.vue')

@@ -6,7 +6,7 @@
       @click.self="close"
     >
       <transition name="slide">
-        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl border border-white/10 w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl border border-white/10 w-full max-w-4xl max-h-[90vh] overflow-hidden">
           <!-- Заголовок модалки -->
           <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
             <div class="flex items-center justify-between">
@@ -105,6 +105,133 @@
                 </div>
               </div>
 
+              <!-- Раздел комментариев -->
+              <div class="border-t border-white/10 pt-6">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-xl font-bold text-white flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    Комментарии
+                    <span class="ml-2 bg-blue-500 text-white text-sm px-2 py-1 rounded-full">
+                      {{ approvedComments.length }}
+                    </span>
+                  </h3>
+                  
+                  <!-- Статус модерации для администратора -->
+                  <div v-if="isAdmin" class="flex items-center space-x-2 text-sm">
+                    <span class="text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded-lg">
+                      ⏳ Ожидают: {{ pendingComments.length }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Форма добавления комментария -->
+                <div v-if="isAuthenticated" class="mb-6">
+                  <div class="bg-gray-800/50 rounded-xl p-4 border border-white/10">
+                    <h4 class="text-white font-semibold mb-3 flex items-center">
+                      <svg class="w-5 h-5 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      </svg>
+                      Добавить комментарий
+                    </h4>
+                    <textarea
+                      v-model="newCommentText"
+                      placeholder="Введите ваш комментарий..."
+                      rows="3"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                      :maxlength="500"
+                    ></textarea>
+                    <div class="flex justify-between items-center mt-3">
+                      <span class="text-gray-400 text-sm">
+                        {{ newCommentText.length }}/500 символов
+                      </span>
+                      <button
+                        @click="addComment"
+                        :disabled="!newCommentText.trim() || addingComment"
+                        class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                      >
+                        <svg v-if="addingComment" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>{{ addingComment ? 'Отправка...' : 'Отправить' }}</span>
+                      </button>
+                    </div>
+                    <p v-if="isAuthenticated && !isAdmin" class="text-yellow-400 text-xs mt-2 flex items-center">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                      </svg>
+                      Ваш комментарий будет отправлен на модерацию
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Сообщение для неавторизованных пользователей -->
+                <div v-else class="mb-6 bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
+                  <p class="text-blue-200 text-sm flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Для добавления комментария необходимо 
+                    <button @click="openAuthModal" class="text-white font-semibold underline ml-1 hover:text-blue-300">
+                      войти в систему
+                    </button>
+                  </p>
+                </div>
+
+                <!-- Список комментариев -->
+                <div v-if="approvedComments.length > 0" class="space-y-4">
+                  <div
+                    v-for="comment in approvedComments"
+                    :key="comment.id"
+                    class="bg-gray-800/30 rounded-xl p-4 border border-white/10"
+                  >
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          {{ comment.userName.split(' ').map(n => n[0]).join('') }}
+                        </div>
+                        <div>
+                          <p class="text-white font-semibold text-sm">{{ comment.userName }}</p>
+                          <p class="text-gray-400 text-xs">{{ formatCommentDate(comment.createdAt) }}</p>
+                        </div>
+                      </div>
+                      <div v-if="comment.editedBy" class="flex items-center space-x-1 text-gray-400 text-xs">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        <span>изменен</span>
+                      </div>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed">{{ comment.text }}</p>
+                    
+                    <!-- Информация о модерации -->
+                    <div v-if="isAdmin && comment.moderatedBy" class="mt-2 pt-2 border-t border-white/10">
+                      <p class="text-gray-400 text-xs">
+                        Модерация: {{ formatCommentDate(comment.moderatedAt) }}
+                        <span v-if="comment.moderationReason" class="ml-2 text-blue-400">
+                          ({{ comment.moderationReason }})
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Сообщение если нет комментариев -->
+                <div v-else class="text-center py-8">
+                  <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                  </div>
+                  <h4 class="text-white font-semibold text-lg mb-2">Пока нет комментариев</h4>
+                  <p class="text-gray-400 text-sm">
+                    {{ isAuthenticated ? 'Будьте первым, кто оставит комментарий!' : 'Авторизуйтесь, чтобы оставить комментарий' }}
+                  </p>
+                </div>
+              </div>
+
               <!-- Действия -->
               <div class="flex items-center justify-between pt-6 border-t border-white/10">
                 <button @click="close" class="text-blue-300 hover:text-white transition-colors flex items-center space-x-2">
@@ -114,7 +241,17 @@
                   <span>Назад к списку</span>
                 </button>
                 
-                
+                <!-- Кнопка модерации для администратора -->
+                <button 
+                  v-if="isAdmin && pendingComments.length > 0"
+                  @click="openModeration"
+                  class="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                  <span>Модерация ({{ pendingComments.length }})</span>
+                </button>
               </div>
             </div>
 
@@ -139,6 +276,9 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
 const props = defineProps({
   news: {
     type: Object,
@@ -150,10 +290,28 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'openModeration'])
+
+const authStore = useAuthStore()
+const newCommentText = ref('')
+const addingComment = ref(false)
+
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAdmin = computed(() => authStore.isAdmin)
+const approvedComments = computed(() => authStore.getCommentsForNews(props.news?.id))
+const pendingComments = computed(() => authStore.getPendingComments().filter(comment => comment.newsId === props.news?.id))
 
 const close = () => {
   emit('close')
+}
+
+const openModeration = () => {
+  emit('openModeration')
+}
+
+const openAuthModal = () => {
+  authStore.openAuthModal('login')
+  close()
 }
 
 const formatFullDate = (dateString) => {
@@ -163,6 +321,43 @@ const formatFullDate = (dateString) => {
     month: 'long',
     day: 'numeric'
   })
+}
+
+const formatCommentDate = (dateString) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return 'только что'
+  if (diffMins < 60) return `${diffMins} мин. назад`
+  if (diffHours < 24) return `${diffHours} ч. назад`
+  if (diffDays < 7) return `${diffDays} дн. назад`
+  
+  return date.toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+const addComment = async () => {
+  if (!newCommentText.value.trim()) return
+
+  addingComment.value = true
+  const result = authStore.addComment(props.news.id, newCommentText.value)
+  
+  if (result.success) {
+    newCommentText.value = ''
+    // Можно добавить уведомление об успешной отправке
+  } else {
+    // Обработка ошибки
+    console.error(result.error)
+  }
+  
+  addingComment.value = false
 }
 
 // Обработка нажатия клавиши Escape
@@ -181,6 +376,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleEscape)
+})
+
+// Сбрасываем форму при открытии/закрытии модалки
+watch(() => props.show, (newVal) => {
+  if (!newVal) {
+    newCommentText.value = ''
+    addingComment.value = false
+  }
 })
 </script>
 

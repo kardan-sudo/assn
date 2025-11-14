@@ -368,6 +368,15 @@ const menuItems = computed(() => {
       icon: '🗺️', 
       requiresAuth: true,
       requiresAdmin: true
+    },
+    // Новая вкладка для модерации комментариев
+    { 
+      name: 'Модерация', 
+      path: '/moderation', 
+      icon: '🛡️',
+      badge: isAdmin.value ? authStore.pendingModerationCount : null,
+      requiresAuth: true,
+      requiresAdmin: true
     }
   ]
 

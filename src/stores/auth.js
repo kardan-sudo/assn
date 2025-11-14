@@ -16,6 +16,12 @@ export const useAuthStore = defineStore('auth', () => {
   // Загружаем зарегистрированных пользователей из localStorage
   const registeredUsers = ref(JSON.parse(localStorage.getItem('registeredUsers')) || [])
 
+  // Система комментариев
+  const comments = ref(JSON.parse(localStorage.getItem('comments')) || [])
+  const pendingModerationCount = computed(() => 
+    comments.value.filter(comment => comment.status === 'pending').length
+  )
+
   const isAuthenticated = computed(() => !!user.value)
   const userRole = computed(() => user.value?.role || 'guest')
   const isAdmin = computed(() => user.value?.role === 'admin')
@@ -113,6 +119,106 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Система комментариев
+  const addComment = (newsId, text) => {
+    if (!user.value) {
+      return { success: false, error: 'Необходимо авторизоваться' }
+    }
+
+    const newComment = {
+      id: Date.now(),
+      newsId: parseInt(newsId),
+      userId: user.value.id,
+      userName: user.value.name,
+      userRole: user.value.role,
+      text: text.trim(),
+      status: 'pending', // pending, approved, rejected
+      createdAt: new Date().toISOString(),
+      moderatedAt: null,
+      moderatedBy: null,
+      moderationReason: null
+    }
+
+    comments.value.push(newComment)
+    localStorage.setItem('comments', JSON.stringify(comments.value))
+    
+    return { success: true }
+  }
+
+  const getCommentsForNews = (newsId) => {
+    return comments.value.filter(comment => 
+      comment.newsId === parseInt(newsId) && comment.status === 'approved'
+    ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  }
+
+  const getPendingComments = () => {
+    return comments.value.filter(comment => comment.status === 'pending')
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  }
+
+  const getApprovedComments = () => {
+    return comments.value.filter(comment => comment.status === 'approved')
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  }
+
+  const getRejectedComments = () => {
+    return comments.value.filter(comment => comment.status === 'rejected')
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  }
+
+  const moderateComment = (commentId, action, reason = '', editedText = null) => {
+    const commentIndex = comments.value.findIndex(c => c.id === commentId)
+    if (commentIndex === -1) {
+      return { success: false, error: 'Комментарий не найден' }
+    }
+
+    const comment = comments.value[commentIndex]
+    
+    if (action === 'approve') {
+      comment.status = 'approved'
+      comment.moderatedAt = new Date().toISOString()
+      comment.moderatedBy = user.value.id
+      comment.moderationReason = reason
+      if (editedText) {
+        comment.text = editedText
+        comment.editedBy = user.value.id
+        comment.editedAt = new Date().toISOString()
+      }
+    } else if (action === 'reject') {
+      comment.status = 'rejected'
+      comment.moderatedAt = new Date().toISOString()
+      comment.moderatedBy = user.value.id
+      comment.moderationReason = reason
+    } else if (action === 'edit') {
+      comment.text = editedText
+      comment.editedBy = user.value.id
+      comment.editedAt = new Date().toISOString()
+    }
+
+    localStorage.setItem('comments', JSON.stringify(comments.value))
+    return { success: true }
+  }
+
+  const deleteComment = (commentId) => {
+    const commentIndex = comments.value.findIndex(c => c.id === commentId)
+    if (commentIndex === -1) {
+      return { success: false, error: 'Комментарий не найден' }
+    }
+
+    comments.value.splice(commentIndex, 1)
+    localStorage.setItem('comments', JSON.stringify(comments.value))
+    return { success: true }
+  }
+
+  const getCommentStats = () => {
+    const total = comments.value.length
+    const pending = comments.value.filter(c => c.status === 'pending').length
+    const approved = comments.value.filter(c => c.status === 'approved').length
+    const rejected = comments.value.filter(c => c.status === 'rejected').length
+
+    return { total, pending, approved, rejected }
+  }
+
   return {
     user,
     showAuthModal,
@@ -128,6 +234,17 @@ export const useAuthStore = defineStore('auth', () => {
     switchAuthMode,
     hasAccess,
     isUserAdmin,
-    getUserStats
+    getUserStats,
+    // Комментарии
+    comments,
+    pendingModerationCount,
+    addComment,
+    getCommentsForNews,
+    getPendingComments,
+    getApprovedComments,
+    getRejectedComments,
+    moderateComment,
+    deleteComment,
+    getCommentStats
   }
 })
