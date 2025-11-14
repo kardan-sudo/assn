@@ -6,50 +6,12 @@
         📊 Аналитические отчеты
       </h1>
       <p class="text-purple-200 text-lg">
-        Конфиденциальные аналитические материалы и отчеты по развитию региона
+        Материалы и отчеты по развитию региона
       </p>
-      <div class="flex items-center space-x-2 mt-2">
-        <span class="text-red-400 text-sm">🔒</span>
-        <span class="text-red-300 text-sm">Доступ ограничен • Только для администраторов</span>
-      </div>
-    </div>
-
-    <!-- Навигация по разделам -->
-    <div class="glass rounded-2xl p-1 border border-white/20">
-      <div class="flex space-x-1">
-        <router-link
-          v-for="tab in closedTabs"
-          :key="tab.path"
-          :to="tab.path"
-          :class="[
-            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-center',
-            $route.path === tab.path
-              ? 'bg-purple-600 text-white shadow-lg'
-              : 'text-purple-200 hover:text-white hover:bg-white/10'
-          ]"
-        >
-          <div class="flex items-center justify-center space-x-2">
-            <span class="text-lg">{{ tab.icon }}</span>
-            <span>{{ tab.title }}</span>
-          </div>
-        </router-link>
-      </div>
     </div>
 
     <!-- Контент страницы -->
     <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
-          <span>📊</span>
-          <span>Аналитические отчеты и исследования</span>
-        </h2>
-        <div class="flex items-center space-x-3">
-          <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-            <span>📥</span>
-            <span>Экспорт всех отчетов</span>
-          </button>
-        </div>
-      </div>
 
       <!-- Фильтры -->
       <div class="glass rounded-2xl p-4 border border-white/20 mb-6">
@@ -89,7 +51,7 @@
                 <p class="text-purple-300 text-xs">Обновлено: 25.10.2025</p>
               </div>
             </div>
-            <span class="bg-purple-500/30 text-purple-200 px-2 py-1 rounded text-xs font-semibold">Конфиденциально</span>
+            <span class="bg-purple-500/30 text-purple-200 px-2 py-1 rounded text-xs font-semibold">Секретно</span>
           </div>
           <p class="text-purple-200 text-sm mb-4">
             Детальный анализ ВРП, инвестиционной активности и промышленного производства региона. Включает сравнительный анализ с соседними регионами и прогноз на 2026.
@@ -101,7 +63,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-purple-300">Данные до:</span>
-              <span class="text-white">Q3 2025</span>
+              <span class="text-white">3 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-purple-300">Статус:</span>
@@ -110,10 +72,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>
@@ -147,7 +105,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-pink-300">Данные до:</span>
-              <span class="text-white">Q2 2025</span>
+              <span class="text-white">3 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-pink-300">Статус:</span>
@@ -156,10 +114,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>
@@ -193,7 +147,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-blue-300">Данные до:</span>
-              <span class="text-white">Q3 2025</span>
+              <span class="text-white">3 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-blue-300">Статус:</span>
@@ -202,10 +156,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>
@@ -227,7 +177,7 @@
                 <p class="text-green-300 text-xs">Обновлено: 15.10.2025</p>
               </div>
             </div>
-            <span class="bg-green-500/30 text-green-200 px-2 py-1 rounded text-xs font-semibold">Конфиденциально</span>
+            <span class="bg-green-500/30 text-green-200 px-2 py-1 rounded text-xs font-semibold">ДСП</span>
           </div>
           <p class="text-green-200 text-sm mb-4">
             Стратегический прогноз социально-экономического развития Курской области с учетом федеральных трендов и региональных особенностей.
@@ -239,7 +189,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-green-300">Данные до:</span>
-              <span class="text-white">Q3 2025</span>
+              <span class="text-white">3 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-green-300">Статус:</span>
@@ -248,10 +198,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>
@@ -285,7 +231,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-yellow-300">Данные до:</span>
-              <span class="text-white">Q2 2025</span>
+              <span class="text-white">2 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-yellow-300">Статус:</span>
@@ -294,10 +240,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>
@@ -331,7 +273,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-red-300">Данные до:</span>
-              <span class="text-white">Q3 2025</span>
+              <span class="text-white">3 квартала 2025</span>
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-red-300">Статус:</span>
@@ -340,10 +282,6 @@
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
-                <span>📄</span>
-                <span>Просмотр</span>
-              </button>
               <button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center space-x-2">
                 <span>📥</span>
                 <span>PDF</span>

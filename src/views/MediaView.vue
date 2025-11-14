@@ -2,42 +2,6 @@
   <div class="space-y-8 animate-fade-in-up">
     <!-- Заголовок -->
     <div>
-      <h1 class="text-3xl font-bold text-white mb-2">
-        📺 Мониторинг СМИ
-      </h1>
-      <p class="text-purple-200 text-lg">
-        Анализ медиапространства и социальных сетей региона
-      </p>
-      <div class="flex items-center space-x-2 mt-2">
-        <span class="text-red-400 text-sm">🔒</span>
-        <span class="text-red-300 text-sm">Доступ ограничен • Только для администраторов</span>
-      </div>
-    </div>
-
-    <!-- Навигация по разделам -->
-    <div class="glass rounded-2xl p-1 border border-white/20">
-      <div class="flex space-x-1">
-        <router-link
-          v-for="tab in closedTabs"
-          :key="tab.path"
-          :to="tab.path"
-          :class="[
-            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-center',
-            $route.path === tab.path
-              ? 'bg-purple-600 text-white shadow-lg'
-              : 'text-purple-200 hover:text-white hover:bg-white/10'
-          ]"
-        >
-          <div class="flex items-center justify-center space-x-2">
-            <span class="text-lg">{{ tab.icon }}</span>
-            <span>{{ tab.title }}</span>
-          </div>
-        </router-link>
-      </div>
-    </div>
-
-    <!-- Контент страницы -->
-    <section>
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
           <span>📺</span>
@@ -50,6 +14,11 @@
           </div>
         </div>
       </div>
+
+    </div>
+
+    <!-- Контент страницы -->
+    <section>
 
       <!-- Ключевые метрики -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -8,43 +8,15 @@
       <p class="text-blue-200 text-lg">
         Рабочие визиты, встречи и мероприятия Главного федерального инспектора
       </p>
-    </div>
-
-    <!-- Навигация по разделам -->
-    <div class="glass rounded-2xl p-1 border border-white/20">
-      <div class="flex space-x-1">
-        <router-link
-          v-for="tab in openTabs"
-          :key="tab.path"
-          :to="tab.path"
-          :class="[
-            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-center',
-            $route.path === tab.path
-              ? 'bg-blue-600 text-white shadow-lg'
-              : 'text-blue-200 hover:text-white hover:bg-white/10'
-          ]"
-        >
-          <div class="flex items-center justify-center space-x-2">
-            <span class="text-lg">{{ tab.icon }}</span>
-            <span>{{ tab.title }}</span>
-          </div>
-        </router-link>
-      </div>
-    </div>
-
-    <!-- Контент страницы -->
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
-          <span>👨‍💼</span>
-          <span>Деятельность Главного федерального инспектора</span>
-        </h2>
-        <div class="flex items-center space-x-2 bg-blue-500/20 px-3 py-2 rounded-lg">
+              <div class="flex items-center space-x-2 bg-blue-500/20 px-3 py-2 rounded-lg">
           <span class="text-blue-300 text-sm">Активность за месяц:</span>
           <span class="text-white font-semibold">{{ gfiActivities.length }} мероприятий</span>
         </div>
-      </div>
+    </div>
 
+
+    <!-- Контент страницы -->
+    <section>
       <!-- Основная информация о ГФИ -->
       <div class="glass rounded-2xl p-6 border border-white/20 mb-8">
         <div class="flex items-center space-x-6">

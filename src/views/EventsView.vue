@@ -8,42 +8,15 @@
       <p class="text-blue-200 text-lg">
         Актуальные новости и события региона за последний период
       </p>
-    </div>
-
-    <!-- Навигация по разделам -->
-    <div class="glass rounded-2xl p-1 border border-white/20">
-      <div class="flex space-x-1">
-        <router-link
-          v-for="tab in openTabs"
-          :key="tab.path"
-          :to="tab.path"
-          :class="[
-            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-center',
-            $route.path === tab.path
-              ? 'bg-blue-600 text-white shadow-lg'
-              : 'text-blue-200 hover:text-white hover:bg-white/10'
-          ]"
-        >
-          <div class="flex items-center justify-center space-x-2">
-            <span class="text-lg">{{ tab.icon }}</span>
-            <span>{{ tab.title }}</span>
-          </div>
-        </router-link>
-      </div>
+       <div class="flex items-center space-x-2">
+          <span class="text-blue-300 text-sm">Всего новостей: {{ octoberNews.length }}</span>
+          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        </div>
     </div>
 
     <!-- Контент страницы -->
     <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
-          <span>📅</span>
-          <span>Обзор событий за октябрь 2025</span>
-        </h2>
-        <div class="flex items-center space-x-2">
-          <span class="text-blue-300 text-sm">Всего новостей: {{ octoberNews.length }}</span>
-          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        </div>
-      </div>
+      
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <NewsCard

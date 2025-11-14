@@ -3,42 +3,15 @@
     <!-- Заголовок -->
     <div>
       <h1 class="text-3xl font-bold text-white mb-2">
-        ⚠️ Актуальные проблемы
+        ⚠️ Актуальные проблемы субъекта
       </h1>
-      <p class="text-blue-200 text-lg">
-        Ключевые вызовы и проблемы, требующие внимания в регионе
-      </p>
-    </div>
 
-    <!-- Навигация по разделам -->
-    <div class="glass rounded-2xl p-1 border border-white/20">
-      <div class="flex space-x-1">
-        <router-link
-          v-for="tab in openTabs"
-          :key="tab.path"
-          :to="tab.path"
-          :class="[
-            'flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-center',
-            $route.path === tab.path
-              ? 'bg-blue-600 text-white shadow-lg'
-              : 'text-blue-200 hover:text-white hover:bg-white/10'
-          ]"
-        >
-          <div class="flex items-center justify-center space-x-2">
-            <span class="text-lg">{{ tab.icon }}</span>
-            <span>{{ tab.title }}</span>
-          </div>
-        </router-link>
-      </div>
     </div>
 
     <!-- Контент страницы -->
     <section>
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
-          <span>⚠️</span>
-          <span>Актуальные проблемы субъекта</span>
-        </h2>
+
         <div class="flex items-center space-x-3">
           <div class="flex items-center space-x-2">
             <div class="w-3 h-3 bg-red-400 rounded-full"></div>
