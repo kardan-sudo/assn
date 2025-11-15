@@ -49,7 +49,7 @@
         <div class="relative">
           <div class="glass rounded-xl p-4 border border-white/20">
             <img 
-              src="https://images.unsplash.com/photo-1548191656-78979b9b2a0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+              :src="kurskCoatOfArms" 
               alt="Курский край"
               class="w-full h-64 object-cover rounded-lg"
             >
@@ -81,12 +81,12 @@
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <img 
-                src="https://images.unsplash.com/photo-1542662565-7e4b66bae529?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+              :src="kurskCoatOfArms1"
                 alt="Археологические находки"
                 class="w-full h-32 object-cover rounded-lg"
               >
               <img 
-                src="https://images.unsplash.com/photo-1481739843340-7a8846a181c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+              :src="kurskCoatOfArms2"
                 alt="Древние курганы"
                 class="w-full h-32 object-cover rounded-lg"
               >
@@ -132,7 +132,7 @@
               Развивается промышленность, строятся железные дороги. В 1780 году утверждается герб Курской губернии.
             </p>
             <img 
-              src="https://images.unsplash.com/photo-1579033065377-f88cfe0d6c8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+            :src="kurskCoatOfArms3"
               alt="Историческая архитектура Курска"
               class="w-full h-48 object-cover rounded-lg"
             >
@@ -301,6 +301,10 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import kurskCoatOfArms from '@/assets/images/main_kursk-one-day.95mpd7.jpg'
+import kurskCoatOfArms1 from '@/assets/images/suzhdanskij-klad-kurskoj-oblasti.jpg'
+import kurskCoatOfArms2 from '@/assets/images/65648e95eff72839bfd2b1f6e3f9ce0a7.jpg'
+import kurskCoatOfArms3 from '@/assets/images/KVR_000133_07833_1_t218_183616.jpg'
 
 onMounted(() => {
   // Можно добавить анимации при скролле

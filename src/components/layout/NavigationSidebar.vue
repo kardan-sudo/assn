@@ -361,7 +361,7 @@ const menuItems = computed(() => {
       requiresAuth: true,
       requiresAdmin: true
     },
-    { name: 'Системы', path: '/systems', icon: '🔗' },
+    { name: 'Государственные системы', path: '/systems', icon: '🔗' },
     { 
       name: 'ГИС Карта', 
       path: '/gis', 
