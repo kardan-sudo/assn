@@ -50,7 +50,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-red-300">Срок решения</span>
-              <span class="text-white">2026 Q2</span>
+              <span class="text-white">2 квартал 2026</span>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-yellow-300">Срок решения</span>
-              <span class="text-white">2026 Q4</span>
+              <span class="text-white">4 квартал 2026</span>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-orange-300">Срок решения</span>
-              <span class="text-white">2025 Q4</span>
+              <span class="text-white">4 квартал 2025</span>
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-blue-300">Срок решения</span>
-              <span class="text-white">2026 Q1</span>
+              <span class="text-white">1 квартал 2026</span>
             </div>
           </div>
         </div>
@@ -170,7 +170,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-purple-300">Срок решения</span>
-              <span class="text-white">2026 Q3</span>
+              <span class="text-white">3 квартал 2026</span>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@
             </div>
             <div class="flex justify-between items-center text-xs">
               <span class="text-green-300">Срок решения</span>
-              <span class="text-white">2027 Q1</span>
+              <span class="text-white">1 квартал 2027</span>
             </div>
           </div>
         </div>

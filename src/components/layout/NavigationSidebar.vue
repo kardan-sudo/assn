@@ -81,7 +81,7 @@
                   </router-link>
 
                   <!-- Закрытый раздел -->
-                  <div class="px-3 pt-3 pb-1 border-t border-white/10 mt-2">
+                  <div v-if="isAdmin" class="px-3 pt-3 pb-1 border-t border-white/10 mt-2">
                     <p class="text-xs font-semibold text-purple-300 uppercase tracking-wide">🔒 Закрытый раздел</p>
                   </div>
                   <router-link
